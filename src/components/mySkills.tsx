@@ -3,8 +3,8 @@ import LightButton from './buttons/lightButton';
 
 const MySkills: React.FC = () => {
   return (
-    <div className=''>
-      <h3 className='mt-16 lg:my-4 text-xl font-bold'>My skills</h3>
+    <aside>
+      <h3 className='mt-16 text-xl font-bold lg:my-4'>My skills</h3>
       <div className='flex flex-wrap gap-2'>
         <LightButton text='Javascript' />
         <LightButton text='Typescript' />
@@ -19,7 +19,7 @@ const MySkills: React.FC = () => {
         <LightButton text='SASS' />
         <LightButton text='Github' />
       </div>
-    </div>
+    </aside>
   );
 };
 

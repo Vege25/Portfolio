@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-scroll';
 
 const Navigation: React.FC = () => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const [isDropdownVisible, setDropdownVisible] = useState(false);
-  const navRef1 = React.createRef<HTMLButtonElement>();
-  const navRef2 = React.createRef<HTMLButtonElement>();
-  const navRef3 = React.createRef<HTMLButtonElement>();
 
+  const scrollOffset = 80;
   const screenBreakPoint = 600;
 
   useEffect(() => {
@@ -29,40 +28,90 @@ const Navigation: React.FC = () => {
     setDropdownVisible(!isDropdownVisible);
   };
 
+  const scrollTo = (elementId: string) => {
+    const element = document.getElementById(elementId);
+
+    if (element) {
+      const offset = element.offsetTop - scrollOffset; // Adjust this value as needed
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth',
+      });
+    }
+
+    setDropdownVisible(false); // Close the dropdown after clicking a link
+  };
+
   return (
     <nav className={`fixed w-full h-20 m-0 z-1 xl:block 2xl:w-3/4 bg-dark`}>
       <div className='flex items-center justify-start h-full px-4'>
-        <a href='#' className='relative inline-block w-44 cursor-pointer'>
-          <h2 className='text-nowrap font-medium hover:scale-105 transition-transform ease-in-out duration-300'>
-            <strong className='text-lightBlue font-normal'>{'<'}</strong>
+        <div className='relative inline-block cursor-pointer w-44'>
+          <h2
+            onClick={() => scrollTo('introduceElement')}
+            className='font-medium transition-transform duration-300 ease-in-out text-nowrap hover:scale-105'
+          >
+            <strong className='font-normal text-lightBlue'>{'<'}</strong>
             {'Veeti Sorakivi'}
-            <strong className='text-lightBlue font-normal '>{' />'}</strong>
+            <strong className='font-normal text-lightBlue '>{' />'}</strong>
           </h2>
-        </a>
+        </div>
         <div className='relative inline-flex items-center justify-end w-full h-full'>
           {screenWidth > screenBreakPoint ? (
             <ul className='w-full h-full'>
               <li className='inline-flex items-center justify-start h-full nav-item group'>
-                <button ref={navRef1} className='px-2 py-1 text-sm'>
+                <Link
+                  to='introduceElement'
+                  spy={true}
+                  smooth={true}
+                  duration={800}
+                  offset={-scrollOffset}
+                  className='px-2 py-1 text-sm cursor-pointer'
+                >
                   Introduction
-                </button>
+                </Link>
               </li>
-              <li className=' inline-flex items-center justify-start h-full nav-item group'>
-                <button ref={navRef2} className='px-2 py-1 text-sm'>
+              <li className='inline-flex items-center justify-start h-full nav-item group'>
+                <Link
+                  to='skillsElement'
+                  spy={true}
+                  smooth={true}
+                  duration={800}
+                  offset={-scrollOffset}
+                  className='px-2 py-1 text-sm cursor-pointer'
+                >
                   Skills
-                </button>
+                </Link>
               </li>
-              <li className=' inline-flex items-center justify-start h-full nav-item group'>
-                <button ref={navRef3} className='px-2 py-1 text-sm'>
+              <li className='inline-flex items-center justify-start h-full nav-item group'>
+                <Link
+                  to='projectsElement'
+                  spy={true}
+                  smooth={true}
+                  duration={800}
+                  offset={-scrollOffset}
+                  className='px-2 py-1 text-sm cursor-pointer'
+                >
                   Projects
-                </button>
+                </Link>
+              </li>
+              <li className='inline-flex items-center justify-start h-full nav-item group'>
+                <Link
+                  to='contactElement'
+                  spy={true}
+                  smooth={true}
+                  duration={800}
+                  offset={-scrollOffset}
+                  className='px-2 py-1 text-sm cursor-pointer'
+                >
+                  Contact
+                </Link>
               </li>
             </ul>
           ) : (
             <div className='h-full'>
-              <div className='h-full flex items-center'>
+              <div className='flex items-center h-full'>
                 <button
-                  className='flex items-center gap-2 text-md lg:hidden transition-transform transform hover:scale-105'
+                  className='flex items-center gap-2 transition-transform transform text-md lg:hidden hover:scale-105'
                   onClick={toggleDropdown}
                 >
                   MENU
@@ -79,18 +128,38 @@ const Navigation: React.FC = () => {
         <div className='fixed group-hover:visible'></div>
       </div>
       {isDropdownVisible && screenWidth < screenBreakPoint && (
-        <ul className='absolute w-screen bg-dark bg-opacity-90 border-t-2 border-lightBlue p-2 transform origin-top transition-transform ease-in-out'>
-          <li className='block text-center py-2 '>
-            <button className='text-md'>Introduction</button>
+        <ul className='absolute w-screen p-2 transition-transform ease-in-out origin-top transform border-t-2 bg-dark bg-opacity-90 border-lightBlue'>
+          <li className='block py-2 text-center'>
+            <button
+              onClick={() => scrollTo('introduceElement')}
+              className='text-md'
+            >
+              Introduction
+            </button>
           </li>
-          <li className='block text-center py-2'>
-            <button className='text-md'>Skills</button>
+          <li className='block py-2 text-center'>
+            <button
+              onClick={() => scrollTo('skillsElement')}
+              className='text-md'
+            >
+              Skills
+            </button>
           </li>
-          <li className='block text-center py-2'>
-            <button className='text-md'>Projects</button>
+          <li className='block py-2 text-center'>
+            <button
+              onClick={() => scrollTo('projectsElement')}
+              className='text-md'
+            >
+              Projects
+            </button>
           </li>
-          <li className='block text-center py-2'>
-            <button className='text-md'>Contact</button>
+          <li className='block py-2 text-center'>
+            <button
+              onClick={() => scrollTo('contactElement')}
+              className='text-md'
+            >
+              Contact
+            </button>
           </li>
         </ul>
       )}
