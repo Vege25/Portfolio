@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 507.74 311.38">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #33c6f4;
+        stroke-miterlimit: 10;
+        stroke-width: 12px;
+      }
+
+      .cls-2 {
+        fill: #231f20;
+        font-family: ChalkboardSE-Regular, 'Chalkboard SE';
+        font-size: 200px;
+      }
+    </style>
+  </defs>
+  <text class="cls-2" transform="translate(91.99 208.02)"><tspan x="0" y="0">VS</tspan></text>
+  <polyline class="cls-1" points="87.33 20.36 7.33 124.36 87.33 249.02"/>
+  <polyline class="cls-1" points="416.27 254.94 500.41 145.56 416.27 14.45"/>
+  <line class="cls-1" x1="392.73" y1="1.02" x2="339.11" y2="310.36"/>
+</svg>

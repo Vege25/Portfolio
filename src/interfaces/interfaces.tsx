@@ -4,5 +4,6 @@ interface ProjectProps {
   imageUrl: string;
   linkUrl: string;
   skills?: string[];
+  webUrl?: string;
 }
 export default ProjectProps;

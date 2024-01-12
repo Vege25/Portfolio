@@ -63,6 +63,18 @@ const Projects: React.FC = () => {
         'MariaDB',
       ],
     },
+    {
+      title: 'Personal project',
+      description: [
+        'Yksilotehtava is a web application developed as a school project with the aim of simplifying the process of finding nearby student restaurants and exploring their daily and weekly menus. ',
+        'The project is designed to cater specifically to students, providing them with a convenient tool to discover affordable and delicious meal options around their campus. ',
+      ],
+      imageUrl: './images/projectImages/yksilotehtava.png',
+      linkUrl: 'https://github.com/Vege25/yksilotehtava',
+      webUrl:
+        'https://users.metropolia.fi/~veetiso/vuosi2/uusi-hops/WEB23/yksilotehtava/',
+      skills: ['Typescript', 'CSS', 'HTML', 'PWA'],
+    },
   ];
   return (
     <section className='px-5' id='projectsElement'>
