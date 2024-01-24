@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const Introduction: React.FC = () => {
   const scrollOffset = 80;
@@ -15,7 +16,16 @@ const Introduction: React.FC = () => {
   };
   return (
     <section id='introduceElement'>
-      <div className='flex flex-col items-center justify-center h-screen gap-4 py-20'>
+      <motion.div
+        className='flex flex-col items-center justify-center h-screen gap-4 py-20'
+        variants={{
+          hidden: { opacity: 0, y: 75 },
+          visible: { opacity: 1, y: 0 },
+        }}
+        initial='hidden'
+        animate='visible'
+        transition={{ duration: 0.5, delay: 0.5 }}
+      >
         <h1 className='text-5xl font-bold sm:text-7xl text-lightBlue'>
           Greetings!
         </h1>
@@ -38,7 +48,7 @@ const Introduction: React.FC = () => {
         >
           PROJECTS
         </button>
-      </div>
+      </motion.div>
       <div
         style={{ backgroundImage: 'url("/images/bg-2.jpg")' }}
         className='absolute top-0 left-0 w-full h-screen bg-center bg-cover opacity-30 -z-10'
