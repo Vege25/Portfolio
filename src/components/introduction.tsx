@@ -41,7 +41,7 @@ const Introduction: React.FC = () => {
       </div>
       <div
         style={{ backgroundImage: 'url("/images/bg-2.jpg")' }}
-        className='absolute top-0 left-0 w-screen h-screen bg-center bg-cover opacity-30 -z-10'
+        className='absolute top-0 left-0 w-full h-screen bg-center bg-cover opacity-30 -z-10'
       ></div>
     </section>
   );

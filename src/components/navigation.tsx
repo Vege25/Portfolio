@@ -43,7 +43,7 @@ const Navigation: React.FC = () => {
   };
 
   return (
-    <nav className={`fixed w-full h-20 m-0 z-1 xl:block 2xl:w-3/4 bg-dark`}>
+    <nav className={`fixed w-full m-0 h-20 z-1 xl:block bg-dark`}>
       <div className='flex items-center justify-start h-full px-4'>
         <div className='relative inline-block cursor-pointer w-44'>
           <h2

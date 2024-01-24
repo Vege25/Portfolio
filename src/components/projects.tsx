@@ -80,7 +80,7 @@ const Projects: React.FC = () => {
     <section className='px-5' id='projectsElement'>
       <h2 className='text-3xl font-bold text-center'>MY PROJECTS</h2>
       <div className='w-10 h-1 m-auto my-5 rounded-full bg-lightBlue'></div>
-      <div className='grid grid-cols-1 gap-4 my-10 md:grid-cols-2'>
+      <div className='grid grid-cols-1 gap-4 my-10 md:grid-cols-2 md:max-w-7xl md:mx-auto'>
         {projects.map((project, index) => (
           <Project key={index} project={project} />
         ))}
