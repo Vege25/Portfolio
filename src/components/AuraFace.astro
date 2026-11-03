@@ -1,19 +1,34 @@
 ---
 /**
- * A recreation of Aura's clock screen, built from the firmware's layout
- * (clock_face.c): the same background image, time over date, centred on a
- * 480×480 round display. Shows the current time in Tampere, and switches to
- * the device's red night mode between 22:00 and 07:00 Tampere time.
+ * Aura's clock screen, rebuilt in HTML/CSS from the firmware
+ * (aura-firmware/sim/src/clock_face.c, clock_app.c) so it stays light enough
+ * for the home page: the same Montserrat file, the same four sky images
+ * (darkened like the firmware's convert_bg.py does), and every size and gap
+ * taken from the 480×480 layout, in container units (1 px = 100/480 cqw).
+ *
+ * Live like the device: Tampere time, weather from Open-Meteo, the sky scene
+ * timed from today's sunrise and sunset, and red night mode 22:00–07:00.
+ * The interactive original runs at demo.aura.buddyfall.com.
  */
 import { getImage } from 'astro:assets';
-import bg from '../assets/aura/screen-bg.webp';
+import sunrise from '../assets/aura/scene-sunrise.webp';
+import day from '../assets/aura/scene-day.webp';
+import sunset from '../assets/aura/scene-sunset.webp';
+import night from '../assets/aura/scene-night.webp';
 
 interface Props {
   size?: string;
   caption?: boolean;
 }
 const { size = '22rem', caption = true } = Astro.props;
-const bgImg = await getImage({ src: bg, width: 720 });
+const scenes = await Promise.all(
+  [
+    { name: 'sunrise', src: sunrise },
+    { name: 'day', src: day },
+    { name: 'sunset', src: sunset },
+    { name: 'night', src: night },
+  ].map(async ({ name, src }) => ({ name, img: await getImage({ src, width: 720 }) })),
+);
 ---
 
 <figure class="aura-face mx-auto w-fit">
@@ -21,65 +36,282 @@ const bgImg = await getImage({ src: bg, width: 720 });
     class="relative rounded-full bg-[#1b1a17] p-[4.5%] shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]"
     style={`width:min(${size}, 82vw);aspect-ratio:1`}
   >
-    <div
-      class="relative h-full w-full overflow-hidden rounded-full bg-cover bg-center ring-1 ring-black/60"
-      style={`background-image:url(${bgImg.src})`}
-    >
-      <div class="absolute inset-0 flex flex-col items-center justify-center gap-[0.35em] text-center" style={`font-size:min(calc(${size} / 22), 3.7vw)`}>
-        <span
-          class="aura-time font-normal leading-none tracking-tight tabular-nums text-white transition-colors duration-700"
-          style="font-size:5.4em">--:--</span
-        >
-        <span class="aura-date text-[1.5em] tracking-wide text-[#d7dae1] transition-colors duration-700">&nbsp;</span>
+    <div class="aura-screen relative h-full w-full overflow-hidden rounded-full bg-black ring-1 ring-black/60">
+      {
+        scenes.map(({ name, img }) => (
+          <img
+            class="aura-scene"
+            data-scene={name}
+            src={img.src}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            style={name === 'day' ? 'opacity:1' : undefined}
+          />
+        ))
+      }
+      <div class="aura-dim" aria-hidden="true"></div>
+
+      <div class="aura-stack">
+        <div class="aura-time-date">
+          <div class="aura-time" aria-label="Time in Tampere">
+            <span class="aura-digit">-</span><span class="aura-digit">-</span><span class="aura-colon"
+              >:</span
+            ><span class="aura-digit">-</span><span class="aura-digit">-</span>
+          </div>
+          <div class="aura-date aura-sub">&nbsp;</div>
+        </div>
+        <div class="aura-weather aura-sub" hidden>
+          <span class="aura-icon"></span><span class="aura-temp"></span>
+        </div>
       </div>
+
+      <div class="aura-dots" aria-hidden="true"><span class="on"></span><span></span></div>
     </div>
   </div>
   {
     caption && (
       <figcaption class="label mx-auto mt-5 max-w-xs text-center normal-case tracking-normal">
-        Recreated from the firmware’s screen layout, showing the time in Tampere right now. Photos of the real device coming soon.
+        Rebuilt from the firmware’s screen code: the time, weather and sky in Tampere right now.
       </figcaption>
     )
   }
 </figure>
 
+<style>
+  @font-face {
+    font-family: 'Aura Montserrat';
+    src: url('/fonts/aura/montserrat-aura.woff') format('woff');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Aura Weather';
+    src: url('/fonts/aura/weathericons-aura.woff') format('woff');
+    font-display: block;
+  }
+
+  /* 1 firmware px = 100/480 cqw = 0.2083cqw of the 480 px screen */
+  .aura-screen {
+    container-type: inline-size;
+    --text: #ffffff;
+    --sub: #d7dae1;
+    font-family: 'Aura Montserrat', 'Montserrat', sans-serif;
+    font-weight: 400;
+    line-height: normal;
+  }
+  .aura-scene {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 4s ease-in-out; /* BG_FADE_MS */
+  }
+  /* night mode: the firmware recolors the background 70% toward black */
+  .aura-dim {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out; /* NIGHT_FADE_MS */
+  }
+  .aura-face.is-night .aura-dim {
+    opacity: 0.7;
+  }
+  .aura-face.is-night .aura-screen {
+    --text: #b0503a;
+    --sub: #b0503a;
+  }
+
+  .aura-stack {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5.833cqw; /* pad_row 28 */
+  }
+  .aura-time-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3.333cqw; /* pad_row 16 */
+  }
+  .aura-time {
+    display: flex;
+    font-size: 20.833cqw; /* font_time_108: 100 px */
+    /* LVGL sizes each line from the glyphs a font contains (digits only
+     * here), not the whole font: line_height 72 */
+    line-height: 15cqw;
+    color: var(--text);
+    transition: color 0.8s ease-in-out;
+  }
+  /* fixed-width digit cells (DIGIT_CELL_W 64), proportional glyphs centered */
+  .aura-digit {
+    width: 13.333cqw;
+    text-align: center;
+  }
+  .aura-sub {
+    font-size: 5.833cqw; /* font_label_30: 28 px */
+    line-height: 6.042cqw; /* line_height 29 */
+    color: var(--sub);
+    transition: color 0.8s ease-in-out;
+  }
+  .aura-weather {
+    display: flex;
+    align-items: center;
+    gap: 2.083cqw; /* pad_column 10 */
+  }
+  .aura-weather[hidden] {
+    display: none;
+  }
+  .aura-icon {
+    font-family: 'Aura Weather';
+    font-size: 7.5cqw; /* font_weather_36: 36 px */
+    line-height: 10.833cqw; /* line_height 52 */
+  }
+  .aura-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 4.583cqw; /* -22 from the bottom */
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2.083cqw;
+  }
+  .aura-dots span {
+    width: 1.667cqw; /* DOT_SIZE 8 */
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--sub);
+    opacity: 0.3;
+  }
+  .aura-dots span.on {
+    opacity: 0.8;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aura-scene,
+    .aura-dim,
+    .aura-time,
+    .aura-sub {
+      transition: none;
+    }
+  }
+</style>
+
 <script>
-  const NIGHT = '#B0503A';
-  const fmtTime = new Intl.DateTimeFormat('en-GB', {
+  // Same rules as the firmware's clock_app.c, in Tampere (Finnish) time.
+  const NIGHT_START = 22;
+  const NIGHT_END = 7;
+  const FALLBACK = { rise: 7 * 60, set: 19 * 60 };
+  const WEATHER_URL =
+    'https://api.open-meteo.com/v1/forecast?latitude=61.4978&longitude=23.7610' +
+    '&current=temperature_2m,weather_code,is_day&daily=sunrise,sunset&forecast_days=1' +
+    '&timezone=Europe%2FHelsinki';
+
+  type Weather = { temp: number; code: number; isDay: boolean; rise: number; set: number };
+  let weather: Weather | null = null;
+
+  const fmt = new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Helsinki',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false,
-  });
-  const fmtParts = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Helsinki',
     weekday: 'short',
     day: 'numeric',
     month: 'short',
+    hour12: false,
   });
 
-  const update = () => {
-    const now = new Date();
-    const time = fmtTime.format(now);
-    const hour = Number(time.slice(0, 2));
-    const night = hour >= 22 || hour < 7;
-    const parts = Object.fromEntries(fmtParts.formatToParts(now).map((p) => [p.type, p.value]));
-    const date = `${parts.weekday}, ${parts.day} ${parts.month}`.toUpperCase();
+  // erikflowers/weather-icons glyphs, the same WMO mapping as the firmware
+  const ICON = {
+    daySunny: '', dayCloudy: '', nightClear: '', nightCloudy: '',
+    cloudy: '', fog: '', sprinkle: '', rain: '', sleet: '',
+    showers: '', snow: '', thunder: '', na: '',
+  };
+  function weatherIcon(code: number, isDay: boolean): string {
+    if (code === 0) return isDay ? ICON.daySunny : ICON.nightClear;
+    if (code === 1 || code === 2) return isDay ? ICON.dayCloudy : ICON.nightCloudy;
+    if (code === 3) return ICON.cloudy;
+    if (code === 45 || code === 48) return ICON.fog;
+    if ([51, 53, 55].includes(code)) return ICON.sprinkle;
+    if ([56, 57, 66, 67].includes(code)) return ICON.sleet;
+    if ([61, 63, 65].includes(code)) return ICON.rain;
+    if ([71, 73, 75, 77, 85, 86].includes(code)) return ICON.snow;
+    if ([80, 81, 82].includes(code)) return ICON.showers;
+    if ([95, 96, 99].includes(code)) return ICON.thunder;
+    return ICON.na;
+  }
+
+  function sceneFor(minutes: number): string {
+    const ok = weather && weather.rise >= 0 && weather.set > weather.rise;
+    const rise = ok ? weather!.rise : FALLBACK.rise;
+    const set = ok ? weather!.set : FALLBACK.set;
+    if (minutes < rise - 45) return 'night';
+    if (minutes < rise + 60) return 'sunrise';
+    if (minutes < set - 60) return 'day';
+    if (minutes < set + 60) return 'sunset';
+    return 'night';
+  }
+
+  function minutesOfDay(iso?: string): number {
+    const m = /T(\d\d):(\d\d)/.exec(iso || '');
+    return m ? Number(m[1]) * 60 + Number(m[2]) : -1;
+  }
+
+  function render() {
+    const p: Record<string, string> = Object.fromEntries(
+      fmt.formatToParts(new Date()).map((x) => [x.type, x.value]),
+    );
+    const hh = p.hour === '24' ? '00' : (p.hour ?? '00');
+    const mm = p.minute ?? '00';
+    const hour = Number(hh);
+    const minutes = hour * 60 + Number(mm);
+    const digits = (hh + mm).split('');
+    const date = `${p.weekday}, ${p.day} ${p.month}`.toUpperCase();
+    const scene = sceneFor(minutes);
+    const isNight = hour >= NIGHT_START || hour < NIGHT_END;
 
     document.querySelectorAll<HTMLElement>('.aura-face').forEach((face) => {
-      const t = face.querySelector<HTMLElement>('.aura-time');
+      face.querySelectorAll<HTMLElement>('.aura-digit').forEach((el, i) => (el.textContent = digits[i] ?? ''));
       const d = face.querySelector<HTMLElement>('.aura-date');
-      if (t) {
-        t.textContent = time;
-        t.style.color = night ? NIGHT : '';
-      }
-      if (d) {
-        d.textContent = date;
-        d.style.color = night ? NIGHT : '';
+      if (d) d.textContent = date;
+      face.classList.toggle('is-night', isNight);
+      face.querySelectorAll<HTMLElement>('.aura-scene').forEach((img) => {
+        img.style.opacity = img.dataset.scene === scene ? '1' : '0';
+      });
+      const row = face.querySelector<HTMLElement>('.aura-weather');
+      if (row && weather) {
+        const deg = Math.sign(weather.temp) * Math.round(Math.abs(weather.temp));
+        row.querySelector('.aura-icon')!.textContent = weatherIcon(weather.code, weather.isDay);
+        row.querySelector('.aura-temp')!.textContent = `${deg === 0 ? 0 : deg}°C`;
+        row.hidden = false;
       }
     });
-  };
+  }
 
-  update();
-  setInterval(update, 15_000);
+  async function updateWeather() {
+    try {
+      const res = await fetch(WEATHER_URL);
+      if (!res.ok) return;
+      const j = await res.json();
+      weather = {
+        temp: j.current.temperature_2m,
+        code: j.current.weather_code,
+        isDay: !!j.current.is_day,
+        rise: minutesOfDay(j.daily.sunrise[0]),
+        set: minutesOfDay(j.daily.sunset[0]),
+      };
+      render();
+    } catch {
+      // offline: no weather row, like the device
+    }
+  }
+
+  render();
+  setInterval(render, 15_000);
+  updateWeather();
+  setInterval(updateWeather, 30 * 60 * 1000);
 </script>
