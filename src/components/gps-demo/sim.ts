@@ -48,8 +48,8 @@ const WRONG_TURN_M = 45;
 const REJOIN_AHEAD_M = 10;
 /** Padding around the route on the demo map (GpsDemo's viewBox). */
 export const MAP_PAD_M = 45;
-/** Keep the wrong-turn end point this far inside the map edge, so the hiker marker isn't cut off. */
-const WRONG_TURN_EDGE_MARGIN_M = 15;
+/** Keep the wrong-turn end point this far inside the map edge, so the hiker marker (about 30 m in radius on the map) isn’t cut off. */
+const WRONG_TURN_EDGE_MARGIN_M = 35;
 
 /** The route as the device stores it: simplified, then densified at turns (same as the app). */
 export const NAV_ROUTE: LatLng[] = densifyTurnsOnly(douglasPeucker(ROUTE, 5), CONFIG.turnThresholdDeg);
@@ -282,8 +282,8 @@ export function wrongTurn(s: Sim) {
   s.mode = 'wrong';
 }
 
-/** Advance by `dtReal` real seconds. */
-export function step(s: Sim, dtReal: number, keys: Keys) {
+/** Advance by `dtReal` real seconds. `arrowMaxDegPerS` caps how fast the arrow turns on screen. */
+export function step(s: Sim, dtReal: number, keys: Keys, arrowMaxDegPerS = ARROW_MAX_DEG_PER_S) {
   if (!s.started) return;
   const dt = dtReal * SIM_SPEED;
   let moving = false;
@@ -338,7 +338,7 @@ export function step(s: Sim, dtReal: number, keys: Keys) {
   s.realMs += dtReal * 1000;
 
   if (s.t >= s.nextFixAt) takeFix(s);
-  s.arrow = stepArrowEase(s.arrow, dtReal, s.realMs, ARROW_MAX_DEG_PER_S);
+  s.arrow = stepArrowEase(s.arrow, dtReal, s.realMs, arrowMaxDegPerS);
   if (s.arrived && s.mode === 'auto') s.mode = 'idle';
 }
 

@@ -81,12 +81,14 @@ export default function GpsDemo() {
   useEffect(() => {
     let raf = 0;
     let last = performance.now();
+    // With reduced motion the arrow jumps to its new angle instead of sweeping.
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const loop = (now: number) => {
       const dtReal = Math.min(0.05, (now - last) / 1000);
       last = now;
       const s = simRef.current;
       if (s.started && visible.current) {
-        step(s, dtReal, keys.current);
+        step(s, dtReal, keys.current, reduceMotion ? 10_000 : undefined);
         rerender();
       }
       raf = requestAnimationFrame(loop);
@@ -162,7 +164,6 @@ export default function GpsDemo() {
   const goto = s.goto ? toXY(s.goto) : null;
   const hand = arrowAngle(s);
   const offRoute = s.started && s.isOffRoute;
-  const nextIn = Math.max(0, s.nextFixAt - s.t);
   const baseline = Math.max(1, Math.floor(s.t) + 1);
   const saved = s.started && s.t > 5 ? Math.round((1 - s.fixCount / baseline) * 100) : null;
   const walkingAuto = s.mode === 'auto' || s.resumeAutoAt !== null;
@@ -195,7 +196,13 @@ export default function GpsDemo() {
       <div className="grid gap-0 md:grid-cols-[1fr_17rem]">
         {/* Map */}
         <div className="relative border-b border-line md:border-b-0 md:border-r">
-          <WatchDial hand={hand} offRoute={offRoute} className="pointer-events-none absolute left-3 top-3 w-20 md:hidden" />
+          {/* Phones: the dial and status sit above the map instead of covering part of it */}
+          <div className="flex items-center gap-4 border-b border-line p-3 md:hidden">
+            <WatchDial hand={hand} offRoute={offRoute} className="w-20 shrink-0" />
+            <p className="text-sm leading-snug text-ink" aria-live="polite">
+              {status}
+            </p>
+          </div>
           <svg
             ref={svgRef}
             viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
@@ -319,14 +326,14 @@ export default function GpsDemo() {
         <div className="flex flex-col items-center gap-5 p-5 md:p-6">
           <WatchDial hand={hand} offRoute={offRoute} className="hidden w-44 md:block" />
 
-          <p className="text-center text-sm md:min-h-[2.75rem] leading-snug text-ink" aria-live="polite">
+          <p className="hidden text-center text-sm leading-snug text-ink md:block md:min-h-[2.75rem]" aria-live="polite">
             {status}
           </p>
 
           <dl className="w-full divide-y divide-line border-y border-line font-mono text-xs">
             <div className="flex justify-between gap-3 py-2">
-              <dt className="text-muted">Next GPS check</dt>
-              <dd className="tabular-nums text-ink">{s.started ? `${nextIn.toFixed(0)} s` : '–'}</dd>
+              <dt className="text-muted">GPS checks</dt>
+              <dd className="tabular-nums text-ink">{s.started ? `every ${Math.round(s.lastIntervalMs / 1000)} s` : '–'}</dd>
             </div>
             <div className="flex justify-between gap-3 py-2">
               <dt className="text-muted">Why</dt>
@@ -341,8 +348,8 @@ export default function GpsDemo() {
             </div>
           </dl>
           <p className="-mt-2 text-center font-mono text-xs leading-relaxed text-faint">
-            Demo time runs {SIM_SPEED}× faster, so a check every 1 s shows up about {SIM_SPEED} times a second. “Fewer” is
-            compared with checking every second.
+            Demo time runs {SIM_SPEED}× faster: a check every 12 s comes about every 2 s on screen. “Fewer” is compared
+            with checking every second.
           </p>
         </div>
       </div>
