@@ -12,6 +12,8 @@ const { data, id } = project;
 const href = `/work/${id}/`;
 const num = String(index + 1).padStart(2, '0');
 const flip = index % 2 === 1;
+const demo = data.demo;
+const external = demo ? /^https?:/.test(demo.href) : false;
 ---
 
 <article class="reveal group grid items-center gap-8 border-t border-line py-14 md:grid-cols-12 md:gap-10 md:py-20">
@@ -39,9 +41,23 @@ const flip = index % 2 === 1;
       <StatusTag {...data.status} />
       <span class="font-mono text-xs text-muted">{data.tags.join(' · ')}</span>
     </div>
-    <a href={href} class="mt-8 inline-flex items-center gap-2 font-medium text-ink">
-      <span class="border-b border-line-strong pb-0.5 transition-colors group-hover:border-accent">Read the case</span>
-      <span class="go-arrow text-accent">→</span>
-    </a>
+    <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+      <a href={href} class="inline-flex items-center gap-2 font-medium text-ink">
+        <span class="border-b border-line-strong pb-0.5 transition-colors group-hover:border-accent">Read the case</span>
+        <span class="go-arrow text-accent">→</span>
+      </a>
+      {
+        demo && (
+          <a
+            href={demo.href}
+            class="inline-flex items-center gap-1.5 text-muted transition-colors hover:text-ink"
+            {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+          >
+            <span class="link">{demo.label}</span>
+            <span class:list={['go-arrow text-accent', external && 'out']}>{external ? '↗' : '→'}</span>
+          </a>
+        )
+      }
+    </div>
   </div>
 </article>

@@ -1,5 +1,5 @@
 /**
- * Interactive demo of the GPS arrow. The simulation (./sim.ts) runs the full
+ * Interactive demo of the GPS navigation device. The simulation (./sim.ts) runs the full
  * navigation pipeline from the gps repo (./core, copied unchanged) on a real
  * recorded route that has been moved to a fake location.
  *
@@ -25,6 +25,7 @@ import {
   type Keys,
 } from './sim';
 import { toLatLng, toXY, viewBox } from './projection';
+import { ARROW_PATH, DIAL_TICKS } from '../dial';
 
 /** Length of the dashed "arrow direction" line on the map, in metres. */
 const ARROW_RAY_M = 30;
@@ -191,14 +192,14 @@ export default function GpsDemo() {
       onKeyUp={onKey(false)}
       onBlur={() => (keys.current = { fwd: false, left: false, right: false })}
       className="rounded-xl border border-line bg-raised outline-none focus-visible:ring-2 focus-visible:ring-accent"
-      aria-label="GPS arrow demo. Use the arrow keys to walk and turn."
+      aria-label="GPS navigation demo. Use the arrow keys to walk and turn."
     >
       <div className="grid gap-0 md:grid-cols-[1fr_17rem]">
         {/* Map */}
         <div className="relative border-b border-line md:border-b-0 md:border-r">
           {/* Phones: the dial and status sit above the map instead of covering part of it */}
           <div className="flex items-center gap-4 border-b border-line p-3 md:hidden">
-            <WatchDial hand={hand} offRoute={offRoute} className="w-20 shrink-0" />
+            <WatchDial hand={hand} offRoute={offRoute} className="w-24 shrink-0" />
             <p className="text-sm leading-snug text-ink" aria-live="polite">
               {status}
             </p>
@@ -357,20 +358,36 @@ export default function GpsDemo() {
   );
 }
 
+/** The same dial and arrow as the rest of the site (../dial.ts), which is the arrow the device draws. */
 function WatchDial({ hand, offRoute, className = '' }: { hand: number | null; offRoute: boolean; className?: string }) {
   return (
-    <div
-      className={`aspect-square rounded-full p-[4.5%] transition-shadow duration-500 ${offRoute ? 'shadow-[0_0_0_2px_var(--color-accent)]' : 'shadow-[0_0_0_1px_var(--color-line-strong)]'} ${className}`}
-      style={{ background: '#1b1a17' }}
-      aria-hidden="true"
-    >
-      <div className="relative h-full w-full rounded-full bg-[#0b0b0a]">
-        <svg viewBox="0 0 100 100" className="h-full w-full">
-          <g style={{ transform: `rotate(${hand ?? 0}deg)`, transformOrigin: '50px 50px' }} opacity={hand === null ? 0.35 : 1}>
-            <path d="M50 16 L64 58 L50 50 L36 58 Z" fill={offRoute ? 'var(--color-accent)' : 'var(--color-ink)'} />
-          </g>
-        </svg>
-      </div>
+    <div className={`aspect-square ${className}`} aria-hidden="true">
+      <svg viewBox="0 0 200 200" className="h-full w-full overflow-visible">
+        <circle
+          cx="100"
+          cy="100"
+          r="96"
+          fill="none"
+          stroke={offRoute ? 'var(--color-accent)' : 'var(--color-line-strong)'}
+          strokeWidth={offRoute ? 3 : 1}
+          style={{ transition: 'stroke 400ms, stroke-width 400ms' }}
+        />
+        <circle cx="100" cy="100" r="80" fill="var(--color-bg)" stroke="var(--color-line)" strokeWidth="1" />
+        {DIAL_TICKS.map((t, i) => (
+          <line
+            key={i}
+            x1={t.x1}
+            y1={t.y1}
+            x2={t.x2}
+            y2={t.y2}
+            stroke={t.major ? 'var(--color-muted)' : 'var(--color-faint)'}
+            strokeWidth={t.major ? 1.4 : 0.8}
+          />
+        ))}
+        <g style={{ transform: `rotate(${hand ?? 0}deg)`, transformOrigin: '100px 100px' }} opacity={hand === null ? 0.3 : 1}>
+          <path d={ARROW_PATH} fill="var(--color-accent)" />
+        </g>
+      </svg>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 ---
-title: GPS arrow
+title: GPS navigation device
 order: 4
 kicker: Phone-free hiking navigation
-problem: On hikes I kept taking my phone out to check if I was still on the trail. This device shows only an arrow.
+problem: On hikes I kept taking my phone out to check if I was still on the trail. This device shows an arrow that points the way along the route, so the phone can stay in my pocket.
 description: A small device for hiking that shows only an arrow pointing along your route. Battery-saving GPS logic, written in TypeScript and ported to C for an ESP32. Work in progress, with a live demo.
 status:
   kind: wip
@@ -12,6 +12,7 @@ platform: Web simulator, and an ESP32 board with a round screen
 stack: [TypeScript, React, C, ESP32, GPS]
 tags: [Navigation, Embedded, Battery]
 links: []
+demo: { label: Try the demo, href: '/work/gps-navigation/#demo' }
 linkNote: Try the demo above. The code is private.
 cover:
   kind: gps
@@ -29,7 +30,7 @@ Hiking is my hobby. On a new route I’d keep taking my phone out to check if I 
 
 ## The idea
 
-A small device that does one thing: shows an arrow. If you’re on track, the arrow points straight up. If you start going the wrong way, it turns to show where the route is. No map, no stats. A quick look is enough.
+A small device that does one thing: shows an arrow that points the way. If you’re on track, the arrow points straight up. If you start going the wrong way, it turns to show where the route is. No map, no stats. A quick look is enough.
 
 It’s meant to work without a phone, so the phone’s battery stays for when you really need it.
 

@@ -29,8 +29,8 @@ const isDemo = data.cover.kind === 'gps';
 <Base title={data.title} description={data.description}>
   <article>
     <header class="container-x pb-12 pt-12 md:pt-20">
-      <a href="/#work" class="label inline-flex items-center gap-2 transition-colors hover:text-ink">
-        <span class="go-arrow">←</span> All work
+      <a href="/#work" data-back class="label inline-flex items-center gap-2 transition-colors hover:text-ink">
+        <span class="go-arrow">←</span> Back
       </a>
       <p class="label mt-10">{num} — {data.kicker}</p>
       <h1 class="mt-4 text-5xl font-semibold leading-none sm:text-7xl" style={`view-transition-name: title-${id}`}>
@@ -102,3 +102,18 @@ const isDemo = data.cover.kind === 'gps';
     </nav>
   </article>
 </Base>
+
+<script>
+  // Go back in history when we came from this site, so the home page opens where the
+  // reader left it instead of jumping to the top of the work list.
+  document.querySelector<HTMLAnchorElement>('a[data-back]')?.addEventListener('click', (e) => {
+    let sameSite = false;
+    try {
+      sameSite = new URL(document.referrer).origin === location.origin;
+    } catch {}
+    if (sameSite && history.length > 1) {
+      e.preventDefault();
+      history.back();
+    }
+  });
+</script>

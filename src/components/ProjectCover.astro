@@ -21,8 +21,14 @@ const frame = hero ? 'aspect-[4/3] sm:aspect-[2/1]' : 'aspect-[4/3]';
 
 {
   kind === 'phones' && (
-    <div class:list={['relative flex items-end justify-center overflow-hidden rounded-lg border border-line bg-raised px-6 pt-10', frame]}>
-      <div class:list={['flex items-end gap-3 sm:gap-5', hero ? 'translate-y-[18%] sm:translate-y-[28%]' : 'translate-y-[18%]']}>
+    <div
+      class:list={[
+        'relative flex items-end justify-center overflow-hidden rounded-lg border border-line bg-raised px-6 pt-8 sm:pt-10',
+        // Phones only show one screen on small widths, so give it a taller frame there.
+        hero ? 'aspect-square sm:aspect-[2/1]' : 'aspect-square sm:aspect-[4/3]',
+      ]}
+    >
+      <div class:list={['flex w-full items-end justify-center gap-3 sm:gap-5', hero ? 'translate-y-[18%] sm:translate-y-[28%]' : 'translate-y-[18%]']}>
         {images[1] && (
           <PhoneFrame
             src={images[1]}
@@ -38,7 +44,7 @@ const frame = hero ? 'aspect-[4/3] sm:aspect-[2/1]' : 'aspect-[4/3]';
             alt={alt}
             width={320}
             loading={loading}
-            class:list={['min-w-0', hero ? 'w-[56%] sm:w-64 lg:w-80' : 'w-[56%] sm:w-[36%]']}
+            class:list={['min-w-0', hero ? 'w-[64%] sm:w-64 lg:w-80' : 'w-[64%] sm:w-[36%]']}
           />
         )}
         {images[2] && (
@@ -56,7 +62,7 @@ const frame = hero ? 'aspect-[4/3] sm:aspect-[2/1]' : 'aspect-[4/3]';
 }
 
 {
-  kind === 'wide' && (
+  kind === 'wide' && hero && (
     <div class:list={['relative overflow-hidden rounded-lg border border-line bg-raised', frame]}>
       {images[0] && (
         <Image
@@ -64,22 +70,37 @@ const frame = hero ? 'aspect-[4/3] sm:aspect-[2/1]' : 'aspect-[4/3]';
           alt={alt}
           width={1400}
           loading={loading}
-          class:list={[
-            'absolute max-w-none rounded-md border border-line-strong shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)]',
-            hero ? 'left-[8%] top-[10%] w-[84%]' : 'left-[6%] top-[9%] w-[112%]',
-          ]}
+          class="absolute left-[8%] top-[10%] w-[84%] max-w-none rounded-md border border-line-strong shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)]"
         />
       )}
       {images[1] && (
-        <div
-          class:list={[
-            'absolute overflow-hidden rounded-[1.25rem] border border-line-strong bg-raised p-1 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9)]',
-            hero ? 'bottom-[-40%] right-[4%] w-[17%]' : 'bottom-[-30%] right-[4%] w-[24%]',
-          ]}
-        >
+        <div class="absolute bottom-[-40%] right-[4%] w-[17%] overflow-hidden rounded-[1.25rem] border border-line-strong bg-raised p-1 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9)]">
           <Image src={images[1]} alt="" width={300} densities={[1, 2]} loading={loading} class="block h-auto w-full rounded-[1rem]" />
         </div>
       )}
+    </div>
+  )
+}
+
+{
+  kind === 'wide' && !hero && (
+    <div class:list={['flex items-center justify-center overflow-hidden rounded-lg border border-line bg-raised', frame]}>
+      <div class="relative w-[84%] -translate-x-[3%]">
+        {images[0] && (
+          <Image
+            src={images[0]}
+            alt={alt}
+            width={1200}
+            loading={loading}
+            class="block h-auto w-full rounded-md border border-line-strong shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)]"
+          />
+        )}
+        {images[1] && (
+          <div class="absolute bottom-[-30%] right-[-7%] w-[22%] overflow-hidden rounded-[1rem] border border-line-strong bg-raised p-1 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.9)]">
+            <Image src={images[1]} alt="" width={300} densities={[1, 2]} loading={loading} class="block h-auto w-full rounded-[0.75rem]" />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

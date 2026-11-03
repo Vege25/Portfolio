@@ -15,7 +15,7 @@ function run(s: Sim, realSeconds: number, each?: (s: Sim) => void) {
   }
 }
 
-describe('GPS arrow demo simulation', () => {
+describe('GPS navigation demo simulation', () => {
   it('walks the whole route on track, polling GPS sparingly with 12 s checks on straights', () => {
     const s = initialSim();
     start(s, 'auto');

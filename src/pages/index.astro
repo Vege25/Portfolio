@@ -1,12 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image } from 'astro:assets';
 import { existsSync } from 'node:fs';
 import Base from '../layouts/Base.astro';
 import ArrowDial from '../components/ArrowDial.astro';
 import WorkRow from '../components/WorkRow.astro';
 import CopyEmail from '../components/CopyEmail.astro';
-import { site, timeline, earlier } from '../data/site';
+import EarlierWork from '../components/EarlierWork.astro';
+import { site, timeline } from '../data/site';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
@@ -18,12 +18,12 @@ const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
     <div class="md:col-span-8">
       <p class="label">{site.role} · {site.city}, Finland</p>
       <h1 class="mt-6 text-[2.6rem] font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">
-        I build things when something in my own life doesn’t work.
+        I build software for real problems, starting with my own.
       </h1>
       <p class="mt-8 max-w-2xl text-lg leading-relaxed text-[#d6d4cd] sm:text-xl">
-        Right now that’s a budgeting app I use every day, a multiplayer card game in closed beta, a display that
-        keeps my phone in my pocket and a hiking compass that works without one. By day I write PHP and Symfony at
-        MyCashflow.
+        A budgeting app that pulls in my card purchases and plans my month. A multiplayer strategy card game, now in
+        closed beta. A desk display that shows the time so I don’t reach for my phone. And a hiking device with an
+        arrow that points the way. By day I’m a software developer at MyCashflow.
       </p>
       <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
         <a href="#work" class="inline-flex items-center gap-2 font-medium">
@@ -91,18 +91,23 @@ const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
     <div class="grid gap-10 md:grid-cols-12">
       <div class="md:col-span-4">
         <h2 class="label">How I work</h2>
-        <p class="mt-4 max-w-xs text-2xl font-semibold leading-snug">AI writes a lot of my code. I decide what it should do, and I check that it works.</p>
+        <p class="mt-4 max-w-xs text-2xl font-semibold leading-snug">AI makes me faster. Getting it right is still my job.</p>
       </div>
       <div class="reveal space-y-5 text-lg leading-relaxed text-[#d6d4cd] md:col-span-8">
         <p>
-          I use Claude Code every day, at work and on my own projects. I’ve written my own skills for it: a workflow
-          that takes a task from investigation to a plan, then to implementation and review, and a teaching skill that
-          explains PHP and Symfony code to me through TypeScript, which helped me learn the stack.
+          I use AI tools every day, at work and on my own projects. I don’t just ask for code and hope for the best.
+          Every task goes the same way: look into the code first, write a plan, build it in small steps, then check
+          the result against the plan or the design. Each project also has its own rules the AI has to follow, like
+          code standards and security rules it isn’t allowed to touch.
         </p>
         <p>
-          With AI one person can build a lot more than before. The parts I still do myself are deciding what to build,
-          knowing how it should work, and making sure it actually does. That’s why Säästöt has about 1,950 automated
-          tests, and why the GPS logic was tested in a simulator before it ever ran on hardware.
+          I use it to learn, too. When I moved to PHP and Symfony, I set it up to explain new code to me through
+          TypeScript, the language I already knew.
+        </p>
+        <p>
+          What stays with me is deciding what to build, knowing how it should work and checking that it does. That’s
+          why Säästöt has about 1,950 automated tests, and why the GPS logic ran in a simulator long before it ran on a
+          device.
         </p>
       </div>
     </div>
@@ -115,39 +120,9 @@ const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
         <h2 class="label">Earlier work</h2>
         <p class="mt-4 max-w-xs text-muted">School projects from 2023–24. Public code, and a good picture of where I started.</p>
       </div>
-      <ul class="md:col-span-8">
-        {
-          earlier.map((p) => (
-            <li class="grid grid-cols-[4.5rem_1fr] gap-4 border-t border-line py-5 first:border-t-0 first:pt-0 sm:grid-cols-[6.5rem_1fr] sm:gap-6">
-              <Image
-                src={p.image}
-                alt=""
-                width={208}
-                height={130}
-                fit="cover"
-                position="top"
-                class="aspect-[16/10] w-full rounded border border-line object-cover object-top opacity-80"
-                loading="lazy"
-              />
-              <div class="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
-                <div>
-                  <h3 class="font-semibold">{p.name}</h3>
-                  <p class="mt-1 text-sm text-muted">{p.text}</p>
-                  <p class="mt-2 font-mono text-[0.6875rem] text-faint">{p.stack.join(' · ')}</p>
-                </div>
-                <div class="flex shrink-0 gap-4 text-sm">
-                  {p.links.map((l) => (
-                    <a href={l.href} target="_blank" rel="noopener" class="inline-flex items-center gap-1">
-                      <span class="link">{l.label}</span>
-                      <span class="go-arrow out text-accent">↗</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
+      <div class="md:col-span-8">
+        <EarlierWork />
+      </div>
     </div>
   </section>
 
@@ -166,8 +141,12 @@ const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
           backends, databases and security, and lately microcontrollers, electronics and 3D printing.
         </p>
         <p>
-          Most of what I build starts with something annoying in my own life. Outside work I hike, which is where the
-          GPS arrow came from.
+          Most of what I build starts with something annoying in my own life, and I like to always have some project
+          going on.
+        </p>
+        <p>
+          Outside work I play all kinds of sports, mostly padel and floorball. I hike a lot, which is where the GPS
+          navigation device came from. When I want to slow down, I go to our cottage to fish.
         </p>
       </div>
     </div>

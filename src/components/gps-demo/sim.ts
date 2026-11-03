@@ -1,5 +1,5 @@
 /**
- * The GPS arrow demo's simulation, separate from the UI so it can be tested
+ * The GPS navigation demo's simulation, separate from the UI so it can be tested
  * headlessly (./__tests__/sim.test.ts).
  *
  * A "true" hiker walks around; the simulated device only ever sees noisy GPS

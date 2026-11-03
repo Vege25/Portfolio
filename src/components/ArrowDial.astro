@@ -1,22 +1,24 @@
 ---
 /**
- * The site's mark: the hiking watch's arrow. On the home page it follows the
- * cursor; on touch devices (or with reduced motion) it points down to the work.
+ * The site's mark: the arrow the GPS device draws. With a fine pointer it
+ * follows the cursor; on touch devices (or with reduced motion) it rests at
+ * `angle`.
  */
+import { ARROW_PATH, DIAL_TICKS } from './dial';
+
 interface Props {
   size?: number;
   class?: string;
   interactive?: boolean;
-  /** Resting angle in degrees, 0 = up */
+  /** Resting angle in degrees, 0 = up. Size can be overridden per breakpoint with the --dial-size CSS variable. */
   angle?: number;
 }
 const { size = 280, class: className = '', interactive = true, angle = 180 } = Astro.props;
-const ticks = Array.from({ length: 60 }, (_, i) => i);
 ---
 
 <div
   class:list={['arrow-dial relative select-none', className]}
-  style={`width:${size}px;max-width:100%;aspect-ratio:1`}
+  style={`width:var(--dial-size, ${size}px);max-width:100%;aspect-ratio:1`}
   data-interactive={interactive ? 'true' : undefined}
   data-angle={angle}
   aria-hidden="true"
@@ -25,29 +27,20 @@ const ticks = Array.from({ length: 60 }, (_, i) => i);
     <circle cx="100" cy="100" r="96" fill="none" stroke="var(--color-line-strong)" stroke-width="1"></circle>
     <circle cx="100" cy="100" r="80" fill="var(--color-raised)" stroke="var(--color-line)" stroke-width="1"></circle>
     {
-      ticks.map((i) => {
-        const major = i % 15 === 0;
-        const minor5 = i % 5 === 0;
-        const a = (i / 60) * Math.PI * 2;
-        const r1 = 96 - (major ? 9 : minor5 ? 6 : 3);
-        const r2 = 93;
-        return (
-          <line
-            x1={100 + Math.sin(a) * r1}
-            y1={100 - Math.cos(a) * r1}
-            x2={100 + Math.sin(a) * r2}
-            y2={100 - Math.cos(a) * r2}
-            stroke={major ? 'var(--color-muted)' : 'var(--color-faint)'}
-            stroke-width={major ? 1.4 : 0.8}
-          />
-        );
-      })
+      DIAL_TICKS.map((t) => (
+        <line
+          x1={t.x1}
+          y1={t.y1}
+          x2={t.x2}
+          y2={t.y2}
+          stroke={t.major ? 'var(--color-muted)' : 'var(--color-faint)'}
+          stroke-width={t.major ? 1.4 : 0.8}
+        />
+      ))
     }
     <g class="dial-hand" style={`transform-origin:100px 100px;transform:rotate(${angle}deg)`}>
-      <path d="M100 38 L116 84 L100 76 L84 84 Z" fill="var(--color-accent)"></path>
-      <rect x="98" y="76" width="4" height="48" rx="2" fill="var(--color-accent)" opacity="0.35"></rect>
+      <path d={ARROW_PATH} fill="var(--color-accent)"></path>
     </g>
-    <circle cx="100" cy="100" r="5" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="2"></circle>
   </svg>
 </div>
 

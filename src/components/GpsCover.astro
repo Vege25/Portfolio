@@ -1,5 +1,5 @@
 ---
-/** Static cover for the GPS project: the demo route, a hiker and the arrow it shows. */
+/** Cover for the GPS project: the demo route, a hiker and the device's arrow, which follows the cursor. */
 import { ROUTE, toXY, viewBox, routePath } from './gps-demo/projection';
 import ArrowDial from './ArrowDial.astro';
 
@@ -15,7 +15,7 @@ for (let x = Math.ceil(vb.x / grid) * grid; x < vb.x + vb.w; x += grid) gx.push(
 for (let y = Math.ceil(vb.y / grid) * grid; y < vb.y + vb.h; y += grid) gy.push(y);
 ---
 
-<div class="relative grid h-full w-full grid-cols-[1fr_auto] items-center gap-6 overflow-hidden rounded-lg border border-line bg-raised p-6 sm:p-8">
+<div class="relative grid h-full w-full grid-cols-[1fr_auto] items-center gap-4 overflow-hidden rounded-lg border border-line bg-raised p-5 sm:gap-6 sm:p-8">
   <svg viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} class="h-full max-h-72 w-full" aria-hidden="true">
     {gx.map((x) => <line x1={x} y1={vb.y} x2={x} y2={vb.y + vb.h} stroke="var(--color-line)" stroke-width={1.2 * k} />)}
     {gy.map((y) => <line x1={vb.x} y1={y} x2={vb.x + vb.w} y2={y} stroke="var(--color-line)" stroke-width={1.2 * k} />)}
@@ -23,5 +23,5 @@ for (let y = Math.ceil(vb.y / grid) * grid; y < vb.y + vb.h; y += grid) gy.push(
     <circle cx={hiker.x} cy={hiker.y} r={16 * k} fill="var(--color-ink)" opacity="0.15"></circle>
     <circle cx={hiker.x} cy={hiker.y} r={8 * k} fill="var(--color-ink)"></circle>
   </svg>
-  <ArrowDial size={150} interactive={false} angle={0} class="hidden sm:block" />
+  <ArrowDial size={150} angle={0} class="[--dial-size:6.5rem] sm:[--dial-size:150px]" />
 </div>

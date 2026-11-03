@@ -11,7 +11,7 @@ export const site = {
   city: 'Tampere',
   email: 'v.sorakivi@gmail.com',
   description:
-    'Veeti Sorakivi, software engineer in Tampere. I build things when something in my own life doesn’t work: a budgeting app, a multiplayer game, a desk display and a GPS arrow for hiking.',
+    'Veeti Sorakivi, software engineer in Tampere. I build software for real problems: a budgeting app, a multiplayer card game, a desk display and a GPS navigation device for hiking.',
   links: {
     github: 'https://github.com/Vege25',
     linkedin: 'https://www.linkedin.com/in/veeti-sorakivi-a5a556253/',
@@ -33,7 +33,7 @@ export const timeline: TimelineItem[] = [
     title: 'Software developer',
     where: 'MyCashflow',
     text: 'Software development for MyCashflow, a Finnish e-commerce platform that online stores are built and run on.',
-    stack: ['PHP 8.2', 'Symfony 7.4', 'Doctrine', 'Twig'],
+    stack: ['PHP', 'Symfony'],
   },
   {
     when: '2024',
@@ -102,12 +102,6 @@ export const earlier: EarlierProject[] = [
     text: 'Finds student restaurants near you and shows their daily and weekly menus.',
     stack: ['TypeScript', 'PWA'],
     image: ravintolat,
-    links: [
-      { label: 'GitHub', href: 'https://github.com/Vege25/yksilotehtava' },
-      {
-        label: 'Live',
-        href: 'https://users.metropolia.fi/~veetiso/vuosi2/uusi-hops/WEB23/yksilotehtava/',
-      },
-    ],
+    links: [{ label: 'GitHub', href: 'https://github.com/Vege25/yksilotehtava' }],
   },
 ];

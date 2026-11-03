@@ -2,7 +2,7 @@
 
 Live: https://sorakiviportfolio.netlify.app/
 
-Built with Astro 6, Tailwind CSS 4 and TypeScript. React is used only for the interactive GPS arrow demo.
+Built with Astro 6, Tailwind CSS 4 and TypeScript. React is used only for the interactive GPS navigation demo.
 
 ## Run
 

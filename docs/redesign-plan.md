@@ -16,10 +16,10 @@ Status: phases 1–4 built on branch `redesign-2026` (2026-11-03). Not yet commi
 - [ ] Buddyfall: say *why* the backend moved twice (TODO comment in `buddyfall.mdx`).
 - [ ] Aura: real photos (device on desk and in bedroom, CAD render, print). Replace the screen recreation as the cover.
 - [ ] Buddyfall: fresh screenshots of the current build. The current ones are from before the August polish.
-- [ ] Säästöt: 2× resolution screenshots (the demo renders are 390 px wide), and the demo link once it is live.
+- [ ] Säästöt: 2× resolution screenshots (the demo renders are 390 px wide). The demo link is in.
 - [ ] GPS: link the hosted ESP32/Waveshare demo when it exists.
 - [ ] `public/cv.pdf`
-- [ ] Confirm the studies line (programme name and years) in `src/data/site.ts`.
+- [ ] Education: fill in the programme, years and degree from LinkedIn in `src/data/site.ts` (LinkedIn blocks automated reading).
 - [ ] Netlify: point the site at this repo and branch (the current live build came from elsewhere).
 
 ## 1. Where it is now
