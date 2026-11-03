@@ -1,0 +1,104 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import SpecSheet from '../../components/SpecSheet.astro';
+import ProjectCover from '../../components/ProjectCover.astro';
+import GpsDemo from '../../components/gps-demo/GpsDemo';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return projects.map((project, i) => ({
+    params: { slug: project.id },
+    props: { project, next: projects[(i + 1) % projects.length]! },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  next: CollectionEntry<'projects'>;
+}
+
+const { project, next } = Astro.props;
+const { data, id } = project;
+const { Content } = await render(project);
+const num = String(data.order).padStart(2, '0');
+// The GPS case shows the live demo where the others show a cover image.
+const isDemo = data.cover.kind === 'gps';
+---
+
+<Base title={data.title} description={data.description}>
+  <article>
+    <header class="container-x pb-12 pt-12 md:pt-20">
+      <a href="/#work" class="label inline-flex items-center gap-2 transition-colors hover:text-ink">
+        <span class="go-arrow">←</span> All work
+      </a>
+      <p class="label mt-10">{num} — {data.kicker}</p>
+      <h1 class="mt-4 text-5xl font-semibold leading-none sm:text-7xl" style={`view-transition-name: title-${id}`}>
+        {data.title}
+      </h1>
+      <p class="mt-8 max-w-3xl text-xl leading-relaxed text-[#d6d4cd] sm:text-2xl">{data.problem}</p>
+    </header>
+
+    {
+      isDemo ? (
+        <div class="container-x" id="demo">
+          <GpsDemo client:visible />
+          <p class="label mt-4 max-w-3xl normal-case tracking-normal">
+            Try it: this runs the same navigation code I ported to C for the device, in its TypeScript version. The
+            route is a real recorded walk, moved to a random spot so it doesn’t show where I live.
+          </p>
+        </div>
+      ) : (
+        <div class="container-x" style={`view-transition-name: cover-${id}`}>
+          <ProjectCover kind={data.cover.kind} images={data.cover.images} alt={data.cover.alt} eager variant="hero" />
+          {data.cover.caption && <p class="label mt-4 max-w-3xl normal-case tracking-normal">{data.cover.caption}</p>}
+        </div>
+      )
+    }
+
+    <div class="container-x mt-14 grid gap-12 lg:grid-cols-12">
+      <aside class="lg:col-span-4">
+        <div class="lg:sticky lg:top-24">
+          <SpecSheet
+            status={data.status}
+            role={data.role}
+            platform={data.platform}
+            stack={data.stack}
+            links={data.links}
+            linkNote={data.linkNote}
+          />
+          {
+            data.facts.length > 0 && (
+              <dl class="mt-8 grid grid-cols-3 gap-4 lg:grid-cols-1 lg:gap-5">
+                {data.facts.map((f) => (
+                  <div>
+                    <dt class="sr-only">{f.label}</dt>
+                    <dd>
+                      <span class="block text-2xl font-semibold tracking-tight">{f.value}</span>
+                      <span class="mt-1 block text-sm text-muted">{f.label}</span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )
+          }
+        </div>
+      </aside>
+
+      <div class="prose-case lg:col-span-8 lg:max-w-none [&>h2:first-child]:mt-0">
+        <Content />
+      </div>
+    </div>
+
+    <nav class="container-x mt-24" aria-label="Next project">
+      <a href={`/work/${next.id}/`} class="group block border-t border-line pt-8">
+        <span class="label">Next project</span>
+        <span class="mt-3 flex items-center justify-between gap-6">
+          <span class="text-3xl font-semibold sm:text-5xl">{next.data.title}</span>
+          <span class="go-arrow text-3xl text-accent sm:text-5xl">→</span>
+        </span>
+        <span class="mt-2 block text-muted">{next.data.kicker}</span>
+      </a>
+    </nav>
+  </article>
+</Base>

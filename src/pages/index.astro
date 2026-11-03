@@ -1,0 +1,214 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { existsSync } from 'node:fs';
+import Base from '../layouts/Base.astro';
+import ArrowDial from '../components/ArrowDial.astro';
+import WorkRow from '../components/WorkRow.astro';
+import CopyEmail from '../components/CopyEmail.astro';
+import { site, timeline, earlier } from '../data/site';
+
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
+---
+
+<Base>
+  <!-- Hero -->
+  <section class="container-x grid min-h-[calc(88svh-4rem)] items-center gap-12 py-16 md:grid-cols-12 md:py-24">
+    <div class="md:col-span-8">
+      <p class="label">{site.role} · {site.city}, Finland</p>
+      <h1 class="mt-6 text-[2.6rem] font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">
+        I build things when something in my own life doesn’t work.
+      </h1>
+      <p class="mt-8 max-w-2xl text-lg leading-relaxed text-[#d6d4cd] sm:text-xl">
+        Right now that’s a budgeting app I use every day, a multiplayer card game in closed beta, a display that
+        keeps my phone in my pocket and a hiking compass that works without one. By day I write PHP and Symfony at
+        MyCashflow.
+      </p>
+      <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+        <a href="#work" class="inline-flex items-center gap-2 font-medium">
+          <span class="border-b border-accent pb-0.5">See the work</span>
+          <span class="go-arrow down text-accent">↓</span>
+        </a>
+        <a href="#contact" class="text-muted transition-colors hover:text-ink">Get in touch</a>
+      </div>
+    </div>
+    <div class="hidden justify-center md:col-span-4 md:flex">
+      <div class="flex flex-col items-center gap-4">
+        <ArrowDial size={260} />
+        <p class="label max-w-[15rem] text-center normal-case tracking-normal text-faint">
+          The arrow from my hiking project. It follows your cursor.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Work -->
+  <section id="work" class="container-x pt-8">
+    <div class="flex items-end justify-between gap-6 pb-6">
+      <h2 class="label">Selected work</h2>
+      <p class="label hidden sm:block">{projects.length} projects · mostly private code</p>
+    </div>
+    {projects.map((p, i) => <WorkRow project={p} index={i} />)}
+  </section>
+
+  <!-- Experience -->
+  <section id="experience" class="container-x mt-12 border-t border-line pt-16 md:pt-24">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <h2 class="label">Experience</h2>
+        <p class="mt-4 max-w-xs text-2xl font-semibold leading-snug">
+          Started in frontend. These days I work on the whole thing.
+        </p>
+      </div>
+      <ol class="md:col-span-8">
+        {
+          timeline.map((item) => (
+            <li class="reveal grid gap-2 border-t border-line py-8 first:border-t-0 first:pt-0 sm:grid-cols-[7rem_1fr] sm:gap-6">
+              <span class="label pt-1">{item.when}</span>
+              <div>
+                <h3 class="text-xl font-semibold">
+                  {item.title} <span class="font-normal text-muted">· {item.where}</span>
+                </h3>
+                <p class="mt-3 max-w-2xl text-[#d6d4cd]">{item.text}</p>
+                {item.stack && <p class="mt-4 font-mono text-xs text-muted">{item.stack.join(' · ')}</p>}
+                {item.link && (
+                  <a href={item.link.href} class="mt-4 inline-flex items-center gap-1.5 text-sm" target="_blank" rel="noopener">
+                    <span class="link">{item.link.label}</span>
+                    <span class="go-arrow out text-accent">↗</span>
+                  </a>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- How I work -->
+  <section id="how" class="container-x mt-12 border-t border-line pt-16 md:pt-24">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <h2 class="label">How I work</h2>
+        <p class="mt-4 max-w-xs text-2xl font-semibold leading-snug">AI writes a lot of my code. I decide what it should do, and I check that it works.</p>
+      </div>
+      <div class="reveal space-y-5 text-lg leading-relaxed text-[#d6d4cd] md:col-span-8">
+        <p>
+          I use Claude Code every day, at work and on my own projects. I’ve written my own skills for it: a workflow
+          that takes a task from investigation to a plan, then to implementation and review, and a teaching skill that
+          explains PHP and Symfony code to me through TypeScript, which helped me learn the stack.
+        </p>
+        <p>
+          With AI one person can build a lot more than before. The parts I still do myself are deciding what to build,
+          knowing how it should work, and making sure it actually does. That’s why Säästöt has about 1,950 automated
+          tests, and why the GPS logic was tested in a simulator before it ever ran on hardware.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Earlier work -->
+  <section id="earlier" class="container-x mt-12 border-t border-line pt-16 md:pt-24">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <h2 class="label">Earlier work</h2>
+        <p class="mt-4 max-w-xs text-muted">School projects from 2023–24. Public code, and a good picture of where I started.</p>
+      </div>
+      <ul class="md:col-span-8">
+        {
+          earlier.map((p) => (
+            <li class="grid grid-cols-[4.5rem_1fr] gap-4 border-t border-line py-5 first:border-t-0 first:pt-0 sm:grid-cols-[6.5rem_1fr] sm:gap-6">
+              <Image
+                src={p.image}
+                alt=""
+                width={208}
+                height={130}
+                fit="cover"
+                position="top"
+                class="aspect-[16/10] w-full rounded border border-line object-cover object-top opacity-80"
+                loading="lazy"
+              />
+              <div class="flex flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+                <div>
+                  <h3 class="font-semibold">{p.name}</h3>
+                  <p class="mt-1 text-sm text-muted">{p.text}</p>
+                  <p class="mt-2 font-mono text-[0.6875rem] text-faint">{p.stack.join(' · ')}</p>
+                </div>
+                <div class="flex shrink-0 gap-4 text-sm">
+                  {p.links.map((l) => (
+                    <a href={l.href} target="_blank" rel="noopener" class="inline-flex items-center gap-1">
+                      <span class="link">{l.label}</span>
+                      <span class="go-arrow out text-accent">↗</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="container-x mt-12 border-t border-line pt-16 md:pt-24">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <h2 class="label">About</h2>
+      </div>
+      <div class="reveal space-y-5 text-lg leading-relaxed text-[#d6d4cd] md:col-span-8">
+        <p class="text-2xl font-semibold leading-snug text-ink">
+          I’m Veeti, a software engineer from Tampere.
+        </p>
+        <p>
+          I started with websites and frontend. Since then I’ve moved into everything behind them:
+          backends, databases and security, and lately microcontrollers, electronics and 3D printing.
+        </p>
+        <p>
+          Most of what I build starts with something annoying in my own life. Outside work I hike, which is where the
+          GPS arrow came from.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="container-x mt-12 border-t border-line pt-16 md:pt-24">
+    <div class="grid gap-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <h2 class="label">Contact</h2>
+      </div>
+      <div class="md:col-span-8">
+        <p class="max-w-xl text-2xl font-semibold leading-snug">
+          Want to talk about a job, a project or one of the things above? Email works best.
+        </p>
+        <div class="mt-8">
+          <CopyEmail email={site.email} />
+        </div>
+        <ul class="mt-8 flex flex-wrap gap-x-8 gap-y-3">
+          <li>
+            <a href={site.links.linkedin} target="_blank" rel="noopener me" class="inline-flex items-center gap-1.5">
+              <span class="link">LinkedIn</span><span class="go-arrow out text-accent">↗</span>
+            </a>
+          </li>
+          <li>
+            <a href={site.links.github} target="_blank" rel="noopener me" class="inline-flex items-center gap-1.5">
+              <span class="link">GitHub</span><span class="go-arrow out text-accent">↗</span>
+            </a>
+          </li>
+          {
+            hasCv && (
+              <li>
+                <a href="/cv.pdf" class="inline-flex items-center gap-1.5">
+                  <span class="link">CV (PDF)</span>
+                  <span class="go-arrow down text-accent">↓</span>
+                </a>
+              </li>
+            )
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>

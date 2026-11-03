@@ -1,0 +1,47 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectCover from './ProjectCover.astro';
+import StatusTag from './StatusTag.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  index: number;
+}
+const { project, index } = Astro.props;
+const { data, id } = project;
+const href = `/work/${id}/`;
+const num = String(index + 1).padStart(2, '0');
+const flip = index % 2 === 1;
+---
+
+<article class="reveal group grid items-center gap-8 border-t border-line py-14 md:grid-cols-12 md:gap-10 md:py-20">
+  <a
+    href={href}
+    class:list={['block md:col-span-7', flip && 'md:order-2']}
+    tabindex="-1"
+    aria-hidden="true"
+    style={`view-transition-name: cover-${id}`}
+  >
+    <div class="transition-transform duration-700 ease-[var(--ease-out-soft)] group-hover:-translate-y-1">
+      <ProjectCover kind={data.cover.kind} images={data.cover.images} alt={data.cover.alt} eager={index === 0} />
+    </div>
+  </a>
+
+  <div class:list={['md:col-span-5', flip && 'md:order-1']}>
+    <div class="flex items-center justify-between gap-4">
+      <span class="label">{num} — {data.kicker}</span>
+    </div>
+    <h3 class="mt-4 text-4xl font-semibold leading-tight sm:text-5xl" style={`view-transition-name: title-${id}`}>
+      <a href={href} class="transition-colors hover:text-accent">{data.title}</a>
+    </h3>
+    <p class="mt-4 max-w-md text-lg leading-relaxed text-[#d6d4cd]">{data.problem}</p>
+    <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+      <StatusTag {...data.status} />
+      <span class="font-mono text-xs text-muted">{data.tags.join(' · ')}</span>
+    </div>
+    <a href={href} class="mt-8 inline-flex items-center gap-2 font-medium text-ink">
+      <span class="border-b border-line-strong pb-0.5 transition-colors group-hover:border-accent">Read the case</span>
+      <span class="go-arrow text-accent">→</span>
+    </a>
+  </div>
+</article>

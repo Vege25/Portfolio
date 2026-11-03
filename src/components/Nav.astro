@@ -1,0 +1,51 @@
+---
+import { site } from '../data/site';
+
+const isHome = Astro.url.pathname === '/';
+const base = isHome ? '' : '/';
+const items = [
+  { href: `${base}#work`, label: 'Work' },
+  { href: `${base}#about`, label: 'About' },
+  { href: `${base}#contact`, label: 'Contact' },
+];
+---
+
+<header
+  id="site-nav"
+  class="sticky top-0 z-40 border-b border-transparent bg-bg/80 backdrop-blur-md transition-colors duration-300 data-[scrolled]:border-line"
+>
+  <nav class="container-x flex h-16 items-center justify-between gap-6" aria-label="Main">
+    <a href="/" class="group flex items-center gap-2.5 font-medium tracking-tight">
+      <svg
+        class="h-4 w-4 text-accent transition-transform duration-500 ease-[var(--ease-out-soft)] group-hover:rotate-[24deg]"
+        viewBox="0 0 16 16"
+        aria-hidden="true"
+      >
+        <path d="M8 1 L13 14 L8 11 L3 14 Z" fill="currentColor"></path>
+      </svg>
+      <span>{site.name}</span>
+    </a>
+    <ul class="flex items-center gap-5 text-sm text-muted sm:gap-7">
+      {
+        items.map((item) => (
+          <li>
+            <a href={item.href} class="transition-colors hover:text-ink">
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const nav = document.getElementById('site-nav');
+  const onScroll = () => {
+    if (!nav) return;
+    if (window.scrollY > 8) nav.setAttribute('data-scrolled', '');
+    else nav.removeAttribute('data-scrolled');
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

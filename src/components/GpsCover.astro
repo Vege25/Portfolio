@@ -1,0 +1,27 @@
+---
+/** Static cover for the GPS project: the demo route, a hiker and the arrow it shows. */
+import { ROUTE, toXY, viewBox, routePath } from './gps-demo/projection';
+import ArrowDial from './ArrowDial.astro';
+
+const vb = viewBox(50);
+// Units are metres: scale strokes and the hiker so a larger route doesn't draw them thinner.
+const k = vb.w / 521;
+const path = routePath();
+const hiker = toXY(ROUTE[Math.floor(ROUTE.length * 0.18)]!);
+const grid = vb.w > 800 ? 200 : 100;
+const gx: number[] = [];
+const gy: number[] = [];
+for (let x = Math.ceil(vb.x / grid) * grid; x < vb.x + vb.w; x += grid) gx.push(x);
+for (let y = Math.ceil(vb.y / grid) * grid; y < vb.y + vb.h; y += grid) gy.push(y);
+---
+
+<div class="relative grid h-full w-full grid-cols-[1fr_auto] items-center gap-6 overflow-hidden rounded-lg border border-line bg-raised p-6 sm:p-8">
+  <svg viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`} class="h-full max-h-72 w-full" aria-hidden="true">
+    {gx.map((x) => <line x1={x} y1={vb.y} x2={x} y2={vb.y + vb.h} stroke="var(--color-line)" stroke-width={1.2 * k} />)}
+    {gy.map((y) => <line x1={vb.x} y1={y} x2={vb.x + vb.w} y2={y} stroke="var(--color-line)" stroke-width={1.2 * k} />)}
+    <path d={path} fill="none" stroke="var(--color-accent)" stroke-width={5 * k} stroke-linejoin="round" stroke-linecap="round" opacity="0.9"></path>
+    <circle cx={hiker.x} cy={hiker.y} r={16 * k} fill="var(--color-ink)" opacity="0.15"></circle>
+    <circle cx={hiker.x} cy={hiker.y} r={8 * k} fill="var(--color-ink)"></circle>
+  </svg>
+  <ArrowDial size={150} interactive={false} angle={0} class="hidden sm:block" />
+</div>

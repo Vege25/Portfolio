@@ -1,0 +1,268 @@
+@import '@fontsource-variable/schibsted-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
+@import 'tailwindcss';
+
+/*
+ * Design tokens. One accent only: trail-marker orange.
+ * Everything else is warm greys on a warm near-black.
+ */
+@theme {
+  --color-bg: #0f0f0d;
+  --color-raised: #161613;
+  --color-ink: #ecebe6;
+  --color-muted: #9a988f;
+  --color-faint: #5f5d56;
+  --color-line: #26251f;
+  --color-line-strong: #3a3830;
+  --color-accent: #ff6a2b;
+  --color-accent-soft: #ff6a2b1f;
+
+  --color-live: #7ccf94;
+  --color-beta: #e8b44c;
+  --color-proto: #93a9c9;
+
+  --font-sans: 'Schibsted Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-bg);
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+@layer components {
+  /* Small mono label used for section heads, spec sheets and metadata */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .container-x {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-x {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Inline text link with an underline that draws in */
+  .link {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-underline-offset: 0.25em;
+    text-decoration-thickness: 1px;
+    transition: text-decoration-color 200ms var(--ease-out-soft), color 200ms;
+  }
+
+  .link:hover {
+    text-decoration-color: var(--color-accent);
+  }
+
+  /* Arrow that turns to point where the link goes */
+  .go-arrow {
+    display: inline-block;
+    transition: transform 300ms var(--ease-out-soft);
+  }
+
+  a:hover .go-arrow,
+  a:focus-visible .go-arrow {
+    transform: translateX(3px);
+  }
+
+  a:hover .go-arrow.down,
+  a:focus-visible .go-arrow.down {
+    transform: translateY(3px);
+  }
+
+  a:hover .go-arrow.out,
+  a:focus-visible .go-arrow.out {
+    transform: translate(2px, -2px);
+  }
+
+  /* Prose for case studies */
+  .prose-case {
+    max-width: 40rem;
+    color: var(--color-ink);
+  }
+
+  .prose-case > * + * {
+    margin-top: 1.1em;
+  }
+
+  .prose-case h2 {
+    margin-top: 3.5rem;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  .prose-case h2 + * {
+    margin-top: 1rem;
+  }
+
+  .prose-case h3 {
+    margin-top: 2rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .prose-case h3 + p {
+    margin-top: 0.5rem;
+  }
+
+  .prose-case p,
+  .prose-case li {
+    color: #d6d4cd;
+  }
+
+  .prose-case strong {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+
+  .prose-case a {
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-strong);
+    text-underline-offset: 0.25em;
+  }
+
+  .prose-case a:hover {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .prose-case ul {
+    padding-left: 1.1rem;
+    list-style: none;
+  }
+
+  .prose-case ul > li {
+    position: relative;
+  }
+
+  .prose-case ul > li + li {
+    margin-top: 0.5rem;
+  }
+
+  .prose-case ul > li::before {
+    content: '';
+    position: absolute;
+    left: -1.1rem;
+    top: 0.72em;
+    width: 0.45rem;
+    height: 1px;
+    background: var(--color-accent);
+  }
+
+  .prose-case code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    color: var(--color-ink);
+    background: var(--color-raised);
+    border: 1px solid var(--color-line);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+  }
+
+  /* Figures and demos inside prose get more breathing room than text */
+  .prose-case > .breakout {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+/* Reveal on scroll: subtle and only for big blocks, not every paragraph */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 700ms var(--ease-out-soft),
+      transform 700ms var(--ease-out-soft);
+  }
+
+  .js .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 260ms;
+    animation-timing-function: var(--ease-out-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  @view-transition {
+    navigation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

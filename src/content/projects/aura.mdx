@@ -1,0 +1,49 @@
+---
+title: Aura
+order: 3
+kicker: Modular desk and bedroom display
+problem: I kept picking up my phone to check the time or the weather, got distracted and lost my focus. So I built a small display that shows only what I need.
+description: Aura is a small round display that I can move between my desk and bedroom. ESP32-S3 with C, ESP-IDF and LVGL, in a 3D-printed case I modelled myself.
+status:
+  kind: wip
+  label: v1 in use · work in progress
+role: Solo project, hardware and software
+platform: ESP32-S3 with a 2.8″ round touch screen
+stack: [C, ESP-IDF, LVGL, ESP32-S3, 3D modelling, 3D printing]
+tags: [Electronics, C, 3D printing]
+links:
+  - { label: Live demo, href: 'https://demo.aura.buddyfall.com' }
+linkNote: The real firmware UI, running in your browser. The code is private.
+cover:
+  kind: aura
+  images: []
+  alt: Aura's round screen showing the time and date over a dark mountain background.
+  caption: Recreated from the firmware’s screen layout, showing the time in Tampere right now. Between 22 and 07 it switches to the red night mode, like the device. Photos of the real device coming soon.
+facts:
+  - { value: '480×480', label: round touch screen }
+  - { value: C, label: on ESP-IDF and LVGL }
+  - { value: 3D, label: 'printed case, my own model' }
+---
+
+## The problem
+
+When I’m working, I check the time and the weather a lot. On my phone, that means seeing a notification, opening it, and losing focus. I wanted something that gives me the information at a glance and nothing else.
+
+## What I built
+
+A small round display that I can move around: on my work desk during the day and in my bedroom at night. Each place can have its own view.
+
+- **Time and date** in large type, readable from across the room. Weather is next.
+- **Night mode:** from 22:00 to 07:00 the screen dims to a soft red, so it doesn’t light up the bedroom. A tap brightens it.
+- **Keeps time without the internet:** it syncs over Wi-Fi and has a clock chip to fall back on.
+- **Burn-in protection:** the content moves a few pixels now and then so the screen doesn’t burn in.
+
+## What I learnt
+
+With this project I learnt electronics, 3D modelling and 3D printing. I modelled the case in 3D, printed it and fitted the board inside.
+
+The firmware is written in C on ESP-IDF, with LVGL for the screen. I also built a desktop simulator that uses the same screen code, so I can work on the UI without flashing the device every time.
+
+## Where it is now
+
+The first version is on my desk and in use. Next: live weather, a separate view for each room, and maybe a speaker so it can be an alarm clock too.

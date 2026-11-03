@@ -1,0 +1,106 @@
+---
+/**
+ * The site's mark: the hiking watch's arrow. On the home page it follows the
+ * cursor; on touch devices (or with reduced motion) it points down to the work.
+ */
+interface Props {
+  size?: number;
+  class?: string;
+  interactive?: boolean;
+  /** Resting angle in degrees, 0 = up */
+  angle?: number;
+}
+const { size = 280, class: className = '', interactive = true, angle = 180 } = Astro.props;
+const ticks = Array.from({ length: 60 }, (_, i) => i);
+---
+
+<div
+  class:list={['arrow-dial relative select-none', className]}
+  style={`width:${size}px;max-width:100%;aspect-ratio:1`}
+  data-interactive={interactive ? 'true' : undefined}
+  data-angle={angle}
+  aria-hidden="true"
+>
+  <svg viewBox="0 0 200 200" class="h-full w-full overflow-visible">
+    <circle cx="100" cy="100" r="96" fill="none" stroke="var(--color-line-strong)" stroke-width="1"></circle>
+    <circle cx="100" cy="100" r="80" fill="var(--color-raised)" stroke="var(--color-line)" stroke-width="1"></circle>
+    {
+      ticks.map((i) => {
+        const major = i % 15 === 0;
+        const minor5 = i % 5 === 0;
+        const a = (i / 60) * Math.PI * 2;
+        const r1 = 96 - (major ? 9 : minor5 ? 6 : 3);
+        const r2 = 93;
+        return (
+          <line
+            x1={100 + Math.sin(a) * r1}
+            y1={100 - Math.cos(a) * r1}
+            x2={100 + Math.sin(a) * r2}
+            y2={100 - Math.cos(a) * r2}
+            stroke={major ? 'var(--color-muted)' : 'var(--color-faint)'}
+            stroke-width={major ? 1.4 : 0.8}
+          />
+        );
+      })
+    }
+    <g class="dial-hand" style={`transform-origin:100px 100px;transform:rotate(${angle}deg)`}>
+      <path d="M100 38 L116 84 L100 76 L84 84 Z" fill="var(--color-accent)"></path>
+      <rect x="98" y="76" width="4" height="48" rx="2" fill="var(--color-accent)" opacity="0.35"></rect>
+    </g>
+    <circle cx="100" cy="100" r="5" fill="var(--color-bg)" stroke="var(--color-accent)" stroke-width="2"></circle>
+  </svg>
+</div>
+
+<script>
+  const dials = document.querySelectorAll<HTMLElement>('.arrow-dial[data-interactive]');
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  dials.forEach((dial) => {
+    const hand = dial.querySelector<SVGGElement>('.dial-hand');
+    if (!hand) return;
+
+    const rest = Number(dial.dataset.angle ?? 180);
+    let current = rest;
+    let target = rest;
+    let raf = 0;
+
+    const shortest = (from: number, to: number) => {
+      let d = (to - from) % 360;
+      if (d > 180) d -= 360;
+      if (d < -180) d += 360;
+      return d;
+    };
+
+    const tick = () => {
+      const d = shortest(current, target);
+      // Ease toward the target, like the watch's slew-limited hand but softer.
+      current += d * 0.12;
+      hand.style.transform = `rotate(${current}deg)`;
+      if (Math.abs(d) > 0.1) raf = requestAnimationFrame(tick);
+      else raf = 0;
+    };
+
+    const aimAt = (x: number, y: number) => {
+      const r = dial.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      target = (Math.atan2(x - cx, cy - y) * 180) / Math.PI;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    if (reduce) return;
+
+    if (finePointer) {
+      window.addEventListener('pointermove', (e) => aimAt(e.clientX, e.clientY), { passive: true });
+    } else {
+      // Touch: a small "settling" swing on load, then rest pointing down to the work.
+      target = rest + 50;
+      raf = requestAnimationFrame(tick);
+      setTimeout(() => {
+        target = rest;
+        if (!raf) raf = requestAnimationFrame(tick);
+      }, 700);
+    }
+  });
+</script>

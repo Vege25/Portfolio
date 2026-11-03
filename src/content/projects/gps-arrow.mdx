@@ -1,0 +1,52 @@
+---
+title: GPS arrow
+order: 4
+kicker: Phone-free hiking navigation
+problem: On hikes I kept taking my phone out to check if I was still on the trail. This device shows only an arrow.
+description: A small device for hiking that shows only an arrow pointing along your route. Battery-saving GPS logic, written in TypeScript and ported to C for an ESP32. Work in progress, with a live demo.
+status:
+  kind: wip
+  label: Work in progress
+role: Solo project, hardware and software
+platform: Web simulator, and an ESP32 board with a round screen
+stack: [TypeScript, React, C, ESP32, GPS]
+tags: [Navigation, Embedded, Battery]
+links: []
+linkNote: Try the demo above. The code is private.
+cover:
+  kind: gps
+  images: []
+  alt: A hiking route on a grid with a hiker on it, and a dial with an arrow pointing straight up.
+facts:
+  - { value: '~330', label: tests on the navigation logic }
+  - { value: '1–12 s', label: between GPS checks }
+  - { value: TS → C, label: ported for the device }
+---
+
+## The problem
+
+Hiking is my hobby. On a new route I’d keep taking my phone out to check if I was still on the trail. That keeps GPS running the whole time, drains the phone battery, and means looking at a screen instead of around me.
+
+## The idea
+
+A small device that does one thing: shows an arrow. If you’re on track, the arrow points straight up. If you start going the wrong way, it turns to show where the route is. No map, no stats. A quick look is enough.
+
+It works without a phone, so the phone’s battery stays for when you really need it.
+
+## How it works
+
+- The route is a list of points. On every GPS reading, the device works out which part of the route you’re closest to.
+- The arrow doesn’t aim at the nearest point but at a point a little further along the route. That stops GPS noise from swinging the arrow around, and makes it start turning before a corner, not after it.
+- There’s no compass. The device works out which way you’re walking from how the GPS positions move, and the arrow is relative to that: up means keep going.
+
+### Saving battery
+
+GPS uses the most power. On a long straight path nothing interesting happens, so the device checks its position less often, up to every 12 seconds. Near a corner, or when you start to drift off the trail, it checks every second, and once you’re off the trail the GPS stays on until you’re back. It also plans ahead: if the next check would come too late for an upcoming corner, it checks sooner.
+
+### From TypeScript to C
+
+I wrote and tested the navigation logic in TypeScript first, with a simulator and about 330 tests. Then I ported it to C so it can run on a microcontroller. The C version has its own test programs.
+
+## Where it is now
+
+Not finished. The navigation logic and the C port are done, and the first hardware test runs: an ESP32 board with a round 2.8″ Waveshare screen. I move along a route in the web app, it sends the arrow direction over Bluetooth, and the board draws the arrow and turns it smoothly. Next comes the actual watch, with its own GPS module and battery, so it works without a phone.

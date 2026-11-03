@@ -1,0 +1,16 @@
+---
+interface Props {
+  kind: 'live' | 'beta' | 'wip';
+  label: string;
+}
+const { kind, label } = Astro.props;
+const color = { live: 'bg-live', beta: 'bg-beta', wip: 'bg-proto' }[kind];
+---
+
+<span class="label inline-flex items-center gap-2 !text-ink">
+  <span class="relative flex h-2 w-2">
+    {kind === 'live' && <span class={`absolute inline-flex h-full w-full rounded-full ${color} opacity-60 motion-safe:animate-ping`} />}
+    <span class={`relative inline-flex h-2 w-2 rounded-full ${color}`}></span>
+  </span>
+  {label}
+</span>

@@ -1,0 +1,72 @@
+---
+title: Säästöt
+order: 1
+kicker: Personal finance app
+problem: I was bad at budgeting, and my bank app didn’t help. When I pay for a dinner for two and get half of it back, the bank still counts all of it as my spending.
+description: Säästöt is a budgeting app I built for myself and use every day. Card purchases come in from the bank automatically, I enter only my own share, and the app plans the month, bills and saving goals.
+status:
+  kind: live
+  label: In daily use
+role: Solo project
+platform: Android and web (PWA)
+stack: [TypeScript, React Native, Expo, Supabase, PostgreSQL, Cloudflare Workers, Kotlin]
+tags: [Mobile, Bank data, Security]
+links: []
+linkNote: Public demo with made-up data coming. The real app and its code stay private.
+cover:
+  kind: phones
+  images: ['../../assets/saastot/today.png', '../../assets/saastot/sort.png', '../../assets/saastot/plan.png']
+  alt: The Today screen of Säästöt, showing how much money is left this month and an estimate of what will be saved.
+facts:
+  - { value: '~1,950', label: automated tests }
+  - { value: PSD2, label: bank connection }
+  - { value: '2', label: 'platforms, one codebase' }
+---
+
+import PhoneFrame from '../../components/PhoneFrame.astro';
+import today from '../../assets/saastot/today.png';
+import sort from '../../assets/saastot/sort.png';
+import plan from '../../assets/saastot/plan.png';
+import goal from '../../assets/saastot/goal.png';
+
+## The problem
+
+I was bad at managing money. Monthly bills, the bills that come only once or twice a year and everyday spending all ran together, and at the end of the month there was usually nothing left to save.
+
+Bank apps didn’t help much. They show what you spent in each category, but they count every card payment as yours. If I pay for something and someone pays me back half, the bank still says I spent the whole amount. So the numbers never told the truth.
+
+## What I built
+
+Säästöt follows a proper budgeting method: plan the month first, set money aside for bills and for the bills that come rarely, and save towards goals that have a date. The app does the maths. My only job is to sort each purchase when it comes in.
+
+- **Purchases come in automatically.** Card payments show up from the bank, so I can’t forget any. I pick a category and say how much of it was mine: all, half, a custom amount or none of it.
+- **Today** shows how much is left this month, how much I can spend per day, and how much I’ll save if I stay on budget.
+- **Plan** is where I set up the month. I see straight away how much I’ll have saved by the end of it.
+- **Saving goals** tell me if I’ll reach them on time, and what to change if I won’t.
+- **History** shows how much I’ve saved over time.
+
+<div class="breakout grid grid-cols-2 gap-4 sm:grid-cols-4">
+  <PhoneFrame src={today} alt="Today: money left this month, per-day budget and the savings estimate." width={220} />
+  <PhoneFrame src={sort} alt="Sorting a purchase: only half of the 89.90 € payment counts as my spending." width={220} />
+  <PhoneFrame src={plan} alt="The month’s plan: income, monthly bills and the bills that come rarely." width={220} />
+  <PhoneFrame src={goal} alt="A saving goal with a date, and how much to save per month to reach it." width={220} />
+</div>
+<p class="label !mt-3 normal-case tracking-normal">Screens from the demo version, with made-up data.</p>
+
+## The hard parts
+
+### Keeping financial data safe
+
+The app holds real bank data, so security was the first design question, not the last. Each user’s data is encrypted with their own key before it is stored, so a copy of the database on its own is useless. On top of that, every table has row-level security, each phone has to be registered, and the app opens with a PIN or a fingerprint. I keep the details private on purpose, which is also why the code isn’t public.
+
+### Encrypted, but still useful
+
+Encryption makes the server’s job harder. It can’t read the data, but it still has to sync the bank, drop duplicate payments and suggest which bill a payment belongs to. Getting those to work together was the biggest design problem in the project.
+
+### Purchases that change after the fact
+
+A card purchase first shows up as a pending reservation. Later it turns into the real charge, sometimes with a different amount, and sometimes after the month has already been closed. The app matches the two and fixes the difference without changing a closed month. Tests check that moving a payment around never changes a month’s totals.
+
+## Where it is now
+
+I use it every day and keep improving it. Next comes a public demo with made-up data so anyone can try it. Only the demo will be public.

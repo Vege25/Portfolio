@@ -1,0 +1,85 @@
+---
+/**
+ * A recreation of Aura's clock screen, built from the firmware's layout
+ * (clock_face.c): the same background image, time over date, centred on a
+ * 480×480 round display. Shows the current time in Tampere, and switches to
+ * the device's red night mode between 22:00 and 07:00 Tampere time.
+ */
+import { getImage } from 'astro:assets';
+import bg from '../assets/aura/screen-bg.webp';
+
+interface Props {
+  size?: string;
+  caption?: boolean;
+}
+const { size = '22rem', caption = true } = Astro.props;
+const bgImg = await getImage({ src: bg, width: 720 });
+---
+
+<figure class="aura-face mx-auto w-fit">
+  <div
+    class="relative rounded-full bg-[#1b1a17] p-[4.5%] shadow-[0_40px_80px_-40px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)]"
+    style={`width:min(${size}, 82vw);aspect-ratio:1`}
+  >
+    <div
+      class="relative h-full w-full overflow-hidden rounded-full bg-cover bg-center ring-1 ring-black/60"
+      style={`background-image:url(${bgImg.src})`}
+    >
+      <div class="absolute inset-0 flex flex-col items-center justify-center gap-[0.35em] text-center" style={`font-size:min(calc(${size} / 22), 3.7vw)`}>
+        <span
+          class="aura-time font-normal leading-none tracking-tight tabular-nums text-white transition-colors duration-700"
+          style="font-size:5.4em">--:--</span
+        >
+        <span class="aura-date text-[1.5em] tracking-wide text-[#d7dae1] transition-colors duration-700">&nbsp;</span>
+      </div>
+    </div>
+  </div>
+  {
+    caption && (
+      <figcaption class="label mx-auto mt-5 max-w-xs text-center normal-case tracking-normal">
+        Recreated from the firmware’s screen layout, showing the time in Tampere right now. Photos of the real device coming soon.
+      </figcaption>
+    )
+  }
+</figure>
+
+<script>
+  const NIGHT = '#B0503A';
+  const fmtTime = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Helsinki',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  const fmtParts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Helsinki',
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+
+  const update = () => {
+    const now = new Date();
+    const time = fmtTime.format(now);
+    const hour = Number(time.slice(0, 2));
+    const night = hour >= 22 || hour < 7;
+    const parts = Object.fromEntries(fmtParts.formatToParts(now).map((p) => [p.type, p.value]));
+    const date = `${parts.weekday}, ${parts.day} ${parts.month}`.toUpperCase();
+
+    document.querySelectorAll<HTMLElement>('.aura-face').forEach((face) => {
+      const t = face.querySelector<HTMLElement>('.aura-time');
+      const d = face.querySelector<HTMLElement>('.aura-date');
+      if (t) {
+        t.textContent = time;
+        t.style.color = night ? NIGHT : '';
+      }
+      if (d) {
+        d.textContent = date;
+        d.style.color = night ? NIGHT : '';
+      }
+    });
+  };
+
+  update();
+  setInterval(update, 15_000);
+</script>

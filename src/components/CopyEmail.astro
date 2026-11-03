@@ -1,0 +1,44 @@
+---
+interface Props {
+  email: string;
+}
+const { email } = Astro.props;
+---
+
+<div class="copy-email flex flex-wrap items-center gap-3">
+  <a
+    href={`mailto:${email}`}
+    class="text-2xl font-medium tracking-tight underline decoration-line-strong decoration-1 underline-offset-[0.3em] transition-colors hover:decoration-accent sm:text-4xl"
+    >{email}</a
+  >
+  <button
+    type="button"
+    data-email={email}
+    class="label rounded border border-line-strong px-2.5 py-1.5 transition-colors hover:border-muted hover:text-ink"
+  >
+    <span data-idle>Copy</span>
+    <span data-done hidden class="text-accent">Copied</span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.copy-email button[data-email]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.email ?? '');
+        const idle = btn.querySelector<HTMLElement>('[data-idle]');
+        const done = btn.querySelector<HTMLElement>('[data-done]');
+        if (idle && done) {
+          idle.hidden = true;
+          done.hidden = false;
+          setTimeout(() => {
+            idle.hidden = false;
+            done.hidden = true;
+          }, 1800);
+        }
+      } catch {
+        window.location.href = `mailto:${btn.dataset.email}`;
+      }
+    });
+  });
+</script>

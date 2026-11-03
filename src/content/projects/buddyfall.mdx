@@ -1,0 +1,76 @@
+---
+title: Buddyfall
+order: 2
+kicker: Multiplayer strategy card game
+problem: A card game played on a chess-like board, on web and mobile. My biggest project, and the one that taught me the most about backends.
+description: Buddyfall is a multiplayer strategy card game for web and mobile. Collect cards, build a deck and play 1v1 on a 6×6 board. In closed beta.
+status:
+  kind: beta
+  label: Closed beta
+role: Solo project
+platform: Web and Android
+stack: [TypeScript, React, Node.js, WebSockets, PostgreSQL, Capacitor, Cloudflare]
+tags: [Realtime, Game design, Backend]
+links:
+  - { label: buddyfall.com, href: 'https://buddyfall.com' }
+cover:
+  kind: wide
+  images: ['../../assets/buddyfall/match.png', '../../assets/buddyfall/shop-mobile.png']
+  alt: A Buddyfall match against a bot, with the 6×6 board, the cards in hand and the move history.
+facts:
+  - { value: '60', label: cards and 8 spells }
+  - { value: '200+', label: players in the load test }
+  - { value: '12', label: rulesets }
+---
+
+import { Image } from 'astro:assets';
+import pipi from '../../assets/buddyfall/cards/Pipi.webp';
+import raccoon from '../../assets/buddyfall/cards/Raccoon.webp';
+import panda from '../../assets/buddyfall/cards/Panda.webp';
+import owl from '../../assets/buddyfall/cards/Owl.webp';
+import fox from '../../assets/buddyfall/cards/FoxKit.webp';
+import hedgehog from '../../assets/buddyfall/cards/Hedgehog.webp';
+
+## The game
+
+You collect animal cards, build a deck of eight and play one against one on a 6×6 board. Each card has arrows that show how strong it is in each direction. On your turn you place, move or turn a card, or cast a spell. You win by capturing the other player’s main piece. It plays like a mix of chess and a collectible card game.
+
+## What I built
+
+I’m building it on my own: the game, the servers and everything around them.
+
+- Real-time 1v1 matches with matchmaking, ranked play, friends, invite links, spectating and game review.
+- Several game modes, from casual and ranked to Chaos, where the turn timer keeps getting shorter, and Buddy Mayhem, which has no turns at all.
+- Bots at different difficulty levels.
+- Progression: chests, daily and weekly tasks, achievements, a shop and card cosmetics.
+- Web and Android from one codebase.
+
+<div class="breakout grid grid-cols-3 gap-3 sm:grid-cols-6">
+  {[pipi, raccoon, panda, owl, fox, hedgehog].map((c) => (
+    <Image src={c} alt="" width={160} class="h-auto w-full rounded-md" loading="lazy" />
+  ))}
+</div>
+
+## The hard parts
+
+### The server decides everything
+
+In a competitive game you can’t trust the player’s device. The server owns the game state and the clocks, checks every move and sends the result to both players. Premoves, where you queue your next move before it’s your turn, also have to work within those rules.
+
+### Three backends
+
+The backend started as separate Express services in Docker. Then it moved to Cloudflare Workers, with one Durable Object per match. Now it’s a single Node server with WebSockets and PostgreSQL, and that version runs the beta.
+
+{/* TODO(Veeti): one or two sentences on why each move happened. */}
+
+### A bot that tunes itself
+
+The bot looks ahead several moves (minimax) and scores each position with five weights. Instead of guessing the weights, I let bots play tournaments against each other and kept the best weights, generation after generation: a genetic algorithm. Along the way I found and fixed a bug where parallel searches shared the same weights by accident.
+
+### Load testing
+
+Before the beta I ran a stress test with over 200 simulated players connected at the same time, watching memory use and response times.
+
+## Where it is now
+
+In closed beta: a small group plays it and sends feedback. You can join the waitlist at [buddyfall.com](https://buddyfall.com).

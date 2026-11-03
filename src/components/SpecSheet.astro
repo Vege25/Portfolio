@@ -1,0 +1,51 @@
+---
+import StatusTag from './StatusTag.astro';
+
+interface Props {
+  status: { kind: 'live' | 'beta' | 'wip'; label: string };
+  role: string;
+  platform: string;
+  stack: string[];
+  links: { label: string; href: string }[];
+  linkNote?: string;
+}
+const { status, role, platform, stack, links, linkNote } = Astro.props;
+const rows: { k: string; v: string }[] = [
+  { k: 'Role', v: role },
+  { k: 'Runs on', v: platform },
+];
+---
+
+<dl class="divide-y divide-line border-y border-line text-sm">
+  <div class="grid grid-cols-[6.5rem_1fr] gap-4 py-3">
+    <dt class="label pt-0.5">Status</dt>
+    <dd><StatusTag {...status} /></dd>
+  </div>
+  {
+    rows.map((r) => (
+      <div class="grid grid-cols-[6.5rem_1fr] gap-4 py-3">
+        <dt class="label pt-0.5">{r.k}</dt>
+        <dd class="text-ink">{r.v}</dd>
+      </div>
+    ))
+  }
+  <div class="grid grid-cols-[6.5rem_1fr] gap-4 py-3">
+    <dt class="label pt-0.5">Stack</dt>
+    <dd class="font-mono text-[0.8125rem] leading-relaxed text-muted">{stack.join(' · ')}</dd>
+  </div>
+  <div class="grid grid-cols-[6.5rem_1fr] gap-4 py-3">
+    <dt class="label pt-0.5">Links</dt>
+    <dd class="flex flex-col gap-1">
+      {
+        links.map((l) => (
+          <a href={l.href} class="link inline-flex w-fit items-center gap-1" target="_blank" rel="noopener">
+            {l.label}
+            <span class="go-arrow out text-accent">↗</span>
+          </a>
+        ))
+      }
+      {linkNote && <span class="text-muted">{linkNote}</span>}
+      {links.length === 0 && !linkNote && <span class="text-muted">Private, no public code</span>}
+    </dd>
+  </div>
+</dl>
