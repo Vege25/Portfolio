@@ -20,11 +20,22 @@ const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
       <h1 class="mt-6 text-[2.6rem] font-semibold leading-[1.05] sm:text-6xl lg:text-7xl">
         I build software for real problems, starting with my own.
       </h1>
-      <p class="mt-8 max-w-2xl text-lg leading-relaxed text-[#d6d4cd] sm:text-xl">
-        A budgeting app that pulls in my card purchases and plans my month. A multiplayer strategy card game, now in
-        closed beta. A desk display that shows the time so I don’t reach for my phone. And a hiking device with an
-        arrow that points the way. By day I’m a software developer at MyCashflow.
-      </p>
+      <ul class="mt-10 max-w-3xl border-t border-line">
+        {
+          projects.map((p) => (
+            <li class="border-b border-line">
+              <a
+                href={`/work/${p.id}/`}
+                class="group/line grid gap-0.5 py-2.5 sm:grid-cols-[7rem_1fr] sm:items-baseline sm:gap-5"
+              >
+                <span class="label transition-colors group-hover/line:text-accent">{p.data.shortTitle ?? p.data.title}</span>
+                <span class="text-sm text-[#d6d4cd] transition-colors group-hover/line:text-ink sm:text-base">{p.data.oneLiner}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 max-w-2xl text-base text-[#d6d4cd] sm:text-lg">By day I’m a software developer at MyCashflow.</p>
       <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
         <a href="#work" class="inline-flex items-center gap-2 font-medium">
           <span class="border-b border-accent pb-0.5">See the work</span>
@@ -37,7 +48,7 @@ const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
       <div class="flex flex-col items-center gap-4">
         <ArrowDial size={260} />
         <p class="label max-w-[15rem] text-center normal-case tracking-normal text-faint">
-          The arrow from my hiking project. It follows your cursor.
+          The arrow from my hiking project.
         </p>
       </div>
     </div>
@@ -47,7 +58,7 @@ const hasCv = existsSync(new URL('../../public/cv.pdf', import.meta.url));
   <section id="work" class="container-x pt-8">
     <div class="flex items-end justify-between gap-6 pb-6">
       <h2 class="label">Selected work</h2>
-      <p class="label hidden sm:block">{projects.length} projects · mostly private code</p>
+      <p class="label hidden sm:block">{projects.length} projects</p>
     </div>
     {projects.map((p, i) => <WorkRow project={p} index={i} />)}
   </section>

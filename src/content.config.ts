@@ -10,6 +10,10 @@ const projects = defineCollection({
       order: z.number(),
       /** What it is, in a few words: "Personal finance app" */
       kicker: z.string(),
+      /** Shorter name for tight spots like the home page intro list; defaults to the title */
+      shortTitle: z.string().optional(),
+      /** One line for the home page intro list */
+      oneLiner: z.string(),
       /** The problem, in one or two sentences, in first person. Shown on the home page and as the case intro. */
       problem: z.string(),
       /** Meta description for the case page */
