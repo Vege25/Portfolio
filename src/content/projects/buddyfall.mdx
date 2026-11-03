@@ -63,8 +63,6 @@ In a competitive game you can’t trust the player’s device. The server owns t
 
 The backend started as separate Express services in Docker. Then it moved to Cloudflare Workers, with one Durable Object per match. Now it’s a single Node server with WebSockets and PostgreSQL, and that version runs the beta.
 
-{/* TODO(Veeti): one or two sentences on why each move happened. */}
-
 ### A bot that tunes itself
 
 The bot looks ahead several moves (minimax) and scores each position with five weights. Instead of guessing the weights, I let bots play tournaments against each other and kept the best weights, generation after generation: a genetic algorithm.

@@ -37,9 +37,9 @@ export const timeline: TimelineItem[] = [
   },
   {
     when: '2025',
-    title: 'Information and Communication Technology',
+    title: 'Bachelor of Engineering, ICT',
     where: 'Metropolia UAS',
-    text: 'Where I learned web development. My thesis (2025) was a multiplayer card game: I tested the rules as a physical board game first, then built it in the Godot engine with its own user and game servers, and published it on itch.io. That game grew into Buddyfall.',
+    text: 'Graduated in January 2025, majoring in web development and digital media. My thesis was a multiplayer card game: I tested the rules as a physical board game first, then built it in the Godot engine with its own user and game servers, and published it on itch.io. That game grew into Buddyfall.',
     stack: ['Godot', 'GDScript', 'TypeScript', 'Node', 'WebSockets'],
     link: { label: 'Thesis (in Finnish)', href: 'https://urn.fi/URN:NBN:fi:amk-202501282035' },
   },
