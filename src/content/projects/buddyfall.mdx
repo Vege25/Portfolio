@@ -14,7 +14,7 @@ stack: [TypeScript, React, Node.js, WebSockets, PostgreSQL, Capacitor, Cloudflar
 tags: [Realtime, Game design, Backend]
 links:
   - { label: 'buddyfall.com (landing page)', href: 'https://buddyfall.com' }
-demo: { label: See the landing page, href: 'https://buddyfall.com' }
+demo: { label: See the landing page, href: 'https://buddyfall.com', kind: info }
 cover:
   kind: wide
   images: ['../../assets/buddyfall/match.png', '../../assets/buddyfall/shop-mobile.png']
@@ -67,7 +67,7 @@ The backend started as separate Express services in Docker. Then it moved to Clo
 
 ### A bot that tunes itself
 
-The bot looks ahead several moves (minimax) and scores each position with five weights. Instead of guessing the weights, I let bots play tournaments against each other and kept the best weights, generation after generation: a genetic algorithm. Along the way I found and fixed a bug where parallel searches shared the same weights by accident.
+The bot looks ahead several moves (minimax) and scores each position with five weights. Instead of guessing the weights, I let bots play tournaments against each other and kept the best weights, generation after generation: a genetic algorithm.
 
 ### Load testing
 

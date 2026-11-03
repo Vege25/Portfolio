@@ -24,6 +24,10 @@ const { Content } = await render(project);
 const num = String(data.order).padStart(2, '0');
 // The GPS case shows the live demo where the others show a cover image.
 const isDemo = data.cover.kind === 'gps';
+const demo = data.demo;
+const demoExternal = demo ? /^https?:/.test(demo.href) : false;
+// The GPS demo sits right under the header, so its button just scrolls down to it.
+const demoHere = demo?.href.startsWith(`/work/${id}/#`) ?? false;
 ---
 
 <Base title={data.title} description={data.description}>
@@ -37,6 +41,25 @@ const isDemo = data.cover.kind === 'gps';
         {data.title}
       </h1>
       <p class="mt-8 max-w-3xl text-xl leading-relaxed text-[#d6d4cd] sm:text-2xl">{data.problem}</p>
+      {
+        demo && (
+          <a
+            href={demoHere ? '#demo' : demo.href}
+            class:list={[
+              'mt-10 inline-flex h-12 items-center gap-2 rounded-md px-5 font-semibold transition',
+              demo.kind === 'try'
+                ? 'bg-accent text-bg hover:opacity-90'
+                : 'border border-line-strong text-ink hover:border-accent',
+              // On wide screens the GPS demo is already in view right below.
+              demoHere && 'md:hidden',
+            ]}
+            {...(demoExternal ? { target: '_blank', rel: 'noopener' } : {})}
+          >
+            {demo.label}
+            <span class:list={['go-arrow', demoExternal ? 'out' : 'down']}>{demoExternal ? '↗' : '↓'}</span>
+          </a>
+        )
+      }
     </header>
 
     {
@@ -87,6 +110,21 @@ const isDemo = data.cover.kind === 'gps';
 
       <div class="prose-case lg:col-span-8 lg:max-w-none [&>h2:first-child]:mt-0">
         <Content />
+        {
+          demo && demo.kind === 'try' && !demoHere && (
+            <div class="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3 rounded-lg border border-line bg-raised p-6">
+              <p class="mr-auto text-lg font-semibold text-ink">Want to see it for yourself?</p>
+              <a
+                href={demo.href}
+                class="inline-flex h-12 items-center gap-2 rounded-md bg-accent px-5 font-semibold text-bg no-underline transition-opacity hover:opacity-90"
+                {...(demoExternal ? { target: '_blank', rel: 'noopener' } : {})}
+              >
+                {demo.label}
+                <span class:list={['go-arrow', demoExternal ? 'out' : 'down']}>{demoExternal ? '↗' : '↓'}</span>
+              </a>
+            </div>
+          )
+        }
       </div>
     </div>
 

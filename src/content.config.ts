@@ -31,7 +31,14 @@ const projects = defineCollection({
         .array(z.object({ label: z.string(), href: z.string() }))
         .default([]),
       /** Second call to action on the home page row: a demo or the project's own site */
-      demo: z.object({ label: z.string(), href: z.string() }).optional(),
+      demo: z
+        .object({
+          label: z.string(),
+          href: z.string(),
+          /** "try" = something people can use now (filled button); "info" = a page about it (outlined) */
+          kind: z.enum(['try', 'info']).default('try'),
+        })
+        .optional(),
       /** Shown under the links, e.g. why there is no code */
       linkNote: z.string().optional(),
       cover: z.object({
