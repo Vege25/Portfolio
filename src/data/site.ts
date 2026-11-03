@@ -36,18 +36,20 @@ export const timeline: TimelineItem[] = [
     stack: ['PHP', 'Symfony'],
   },
   {
+    when: '2025',
+    title: 'Information and Communication Technology',
+    where: 'Metropolia UAS',
+    text: 'Where I learned web development. My thesis (2025) was a multiplayer card game: I tested the rules as a physical board game first, then built it in the Godot engine with its own user and game servers, and published it on itch.io. That game grew into Buddyfall.',
+    stack: ['Godot', 'GDScript', 'TypeScript', 'Node', 'WebSockets'],
+    link: { label: 'Thesis (in Finnish)', href: 'https://urn.fi/URN:NBN:fi:amk-202501282035' },
+  },
+  {
     when: '2024',
     title: 'Innovation project',
     where: 'Retail company',
     text: 'The company was moving to two new systems, and about 10,000 products had to go with it. Typing them in by hand would have taken weeks. I built a tool that turned the old system’s CSV exports into the new systems’ import format, with bulk stock updates and cleaned-up colour codes, plus a Python script that fetched all the product images.',
     stack: ['JavaScript', 'Python', 'CSV'],
     link: { label: 'Project report (in Finnish)', href: '/Veeti_Sorakivi_Innovaatioprojekti_Raportti.pdf' },
-  },
-  {
-    when: 'Studies',
-    title: 'ICT studies',
-    where: 'Metropolia UAS',
-    text: 'Where I learned web development. The school projects below are from this time.',
   },
 ];
 

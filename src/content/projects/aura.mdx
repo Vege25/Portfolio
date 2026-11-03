@@ -14,12 +14,13 @@ stack: [C, ESP-IDF, LVGL, ESP32-S3, 3D modelling, 3D printing]
 tags: [Electronics, C, 3D printing]
 links:
   - { label: Live demo, href: 'https://demo.aura.buddyfall.com' }
+demo: { label: Try the live demo, href: 'https://demo.aura.buddyfall.com' }
 linkNote: The real firmware UI, running in your browser. The code is private.
 cover:
   kind: aura
   images: []
   alt: Aura's round screen showing the time, date and weather over a mountain sky.
-  caption: Rebuilt from the firmware’s screen code, showing the time, weather and sky in Tampere right now. The sky follows the real sunrise and sunset, and between 22 and 07 it switches to the red night mode, like the device. Photos of the real device coming soon.
+  caption: The screen as it looks in Tampere right now, rebuilt from the firmware. Photos of the real device coming soon.
 facts:
   - { value: '480×480', label: round touch screen }
   - { value: C, label: on ESP-IDF and LVGL }
@@ -34,7 +35,9 @@ When I’m working, I check the time and the weather a lot. On my phone, that me
 
 A small round display that I can move around: on my work desk during the day and in my bedroom at night. Each place can have its own view.
 
-- **Time and date** in large type, readable from across the room. Weather is next.
+- **Time, date and weather** in large type, readable from across the room. The weather updates every half hour.
+- **A sky that follows the day:** the background changes from sunrise to day, sunset and night, timed by the real sunrise and sunset.
+- **Focus timer:** swipe to a second view, drag a ring round the edge to set the minutes, and it beeps when time is up.
 - **Night mode:** from 22:00 to 07:00 the screen dims to a soft red, so it doesn’t light up the bedroom. A tap brightens it.
 - **Keeps time without the internet:** it syncs over Wi-Fi and has a clock chip to fall back on.
 - **Burn-in protection:** the content moves a few pixels now and then so the screen doesn’t burn in.
@@ -43,8 +46,8 @@ A small round display that I can move around: on my work desk during the day and
 
 With this project I learnt electronics, 3D modelling and 3D printing. I modelled the case in 3D, printed it and fitted the board inside.
 
-The firmware is written in C on ESP-IDF, with LVGL for the screen. I also built a desktop simulator that uses the same screen code, so I can work on the UI without flashing the device every time.
+The firmware is written in C on ESP-IDF, with LVGL for the screen. I also built a desktop simulator that uses the same screen code, so I can work on the UI without flashing the device every time. The same C code also compiles to WebAssembly, which is how the [live demo](https://demo.aura.buddyfall.com) runs in the browser.
 
 ## Where it is now
 
-The first version is on my desk and in use. Next: live weather, a separate view for each room, and maybe a speaker so it can be an alarm clock too.
+The first version is on my desk and in use. Next: a separate view for each room, and maybe a speaker so it can be an alarm clock too.
